@@ -17,6 +17,8 @@ class AuthHandler:
 
         :param config: Dictionary containing MySQL connection configuration.
         """
+        if not isinstance(config, dict):
+            raise TypeError("config must be a dictionary")
         try:
             # Establish connection to the MySQL database using provided configuration
             self.conn = mysql.connector.connect(**config)
