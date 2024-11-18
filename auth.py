@@ -32,8 +32,8 @@ class AuthHandler:
                 print("Database does not exist.")
             else:
                 print(err)
-            # Exit the application if connection fails
-            exit(1)
+            # Do not exit; raise the exception instead
+            raise
 
     def create_users_table(self):
         """
@@ -49,10 +49,18 @@ class AuthHandler:
             lockout_time DATETIME NULL
         )
         """
-        # Execute the table creation query
-        self.cursor.execute(create_table_query)
-        # Commit the changes to the database
-        self.conn.commit()
+        try:
+            # Execute the table creation query
+            self.cursor.execute(create_table_query)
+            # Commit the changes to the database
+            self.conn.commit()
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                # Table already exists, ignore the error
+                pass
+            else:
+                # Re-raise any other exception
+                raise
 
     def register_user(self, username, password):
         """
@@ -253,13 +261,22 @@ class AuthHandler:
         """
         Closes the database cursor and connection.
         """
-        if self.cursor:
-            self.cursor.close()
-        if self.conn:
-            self.conn.close()
+        if hasattr(self, 'cursor') and self.cursor:
+            try:
+                self.cursor.close()
+            except Exception:
+                pass # Suppress any exception during cursor close
+        if hasattr(self, 'conn') and self.conn:
+            try:
+                self.conn.close()
+            except Exception:
+                pass # Suppress any exception during connection close
 
     def __del__(self):
         """
         Destructor to ensure the database connection is closed when the object is deleted.
         """
-        self.close_connection()
+        try:
+            self.close_connection()
+        except Exception:
+            pass  # Suppress any exception during object deletion
