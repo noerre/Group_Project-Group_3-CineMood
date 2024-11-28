@@ -227,6 +227,39 @@ class TestAuthHandler(unittest.TestCase):
         result = self.auth.cursor.fetchone()
         self.assertEqual(result['failed_attempts'], 0)
 
+    def test_login_guest(self):
+        """
+        Test logging in as a guest.
+
+        - Logs in as a guest.
+        - Checks that `current_user` is set correctly.
+        - Verifies that `is_guest` is True.
+        """
+        with patch('sys.stdout', new_callable=StringIO) as fake_out:
+            self.auth.login_guest()
+            # Check that the guest login success message is printed
+            self.assertIn("Logged in as guest.", fake_out.getvalue())
+        # Verify that current_user is set correctly
+        self.assertIsNotNone(self.auth.current_user)
+        self.assertEqual(self.auth.current_user['username'], 'Guest')
+        self.assertTrue(self.auth.current_user['is_guest'])
+
+    def test_guest_does_not_create_user_in_db(self):
+        """
+        Ensure that logging in as a guest does not create a user in the database.
+
+        - Logs in as a guest.
+        - Checks that no user with username 'Guest' exists in the database.
+        """
+        # Log in as guest
+        with patch('sys.stdout', new_callable=StringIO) as fake_out:
+            self.auth.login_guest()
+            self.assertIn("Logged in as guest.", fake_out.getvalue())
+        # Verify that 'Guest' does not exist in the users table
+        self.auth.cursor.execute("SELECT * FROM users WHERE username = %s", ('Guest',))
+        result = self.auth.cursor.fetchone()
+        self.assertIsNone(result)
+
 
 if __name__ == '__main__':
     unittest.main()
