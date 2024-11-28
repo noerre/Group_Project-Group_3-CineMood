@@ -95,6 +95,17 @@ class AuthHandler:
             # Handle case where username is already taken (violates UNIQUE constraint)
             print("Username is already taken. Please choose another one.")
 
+    def login_guest(self):
+        """
+        Logs in the user in guest mode.
+        Creates a temporary user profile without saving it to the database.
+        """
+        self.current_user = {
+            'username': 'Guest',
+            'is_guest': True
+        }
+        print("Logged in as guest.")
+
     def login_user(self, username, password):
         """
         Logs in an existing user with security checks, including account lockout handling.
@@ -267,12 +278,12 @@ class AuthHandler:
             try:
                 self.cursor.close()
             except Exception:
-                pass # Suppress any exception during cursor close
+                pass  # Suppress any exception during cursor close
         if hasattr(self, 'conn') and self.conn:
             try:
                 self.conn.close()
             except Exception:
-                pass # Suppress any exception during connection close
+                pass  # Suppress any exception during connection close
 
     def __del__(self):
         """
