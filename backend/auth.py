@@ -1,12 +1,11 @@
 from datetime import datetime, timedelta
+from typing import Optional
 
 import bcrypt
 import mysql.connector
-from mysql.connector import errorcode
-import os
-from typing import Optional
 # Import JWT functionalities from Flask-JWT-Extended
 from flask_jwt_extended import decode_token
+from mysql.connector import errorcode
 
 
 class AuthHandler:
