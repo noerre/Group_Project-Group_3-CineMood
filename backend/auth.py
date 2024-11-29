@@ -1,11 +1,18 @@
 from datetime import datetime, timedelta
+from typing import Optional
 
 import bcrypt
 import mysql.connector
+# Import JWT functionalities from Flask-JWT-Extended
+from flask_jwt_extended import decode_token
 from mysql.connector import errorcode
 
 
 class AuthHandler:
+    """
+    Handles user authentication, including registration and login functionalities.
+    """
+
     # Maximum allowed failed login attempts before account lockout
     MAX_FAILED_ATTEMPTS = 5
     # Duration of account lockout after reaching max failed attempts
@@ -26,16 +33,16 @@ class AuthHandler:
             self.cursor = self.conn.cursor(dictionary=True)
             # Ensure the users table exists
             self.create_users_table()
+            # Initialize an in-memory set to store revoked tokens
+            self.revoked_tokens = set()
         except mysql.connector.Error as err:
             # Handle common connection errors
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-                print("Incorrect MySQL username or password.")
+                raise Exception("Incorrect MySQL username or password.")
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
-                print("Database does not exist.")
+                raise Exception("Database does not exist.")
             else:
-                print(err)
-            # Do not exit; raise the exception instead
-            raise
+                raise Exception(str(err))
 
     def create_users_table(self):
         """
@@ -46,7 +53,7 @@ class AuthHandler:
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(50) UNIQUE NOT NULL,
-            password BINARY(60) NOT NULL,
+            password VARCHAR(255) NOT NULL,
             failed_attempts INT DEFAULT 0,
             lockout_time DATETIME NULL
         )
@@ -61,8 +68,7 @@ class AuthHandler:
                 # Table already exists, ignore the error
                 pass
             else:
-                # Re-raise any other exception
-                raise
+                raise Exception(str(err))
 
     def register_user(self, username, password):
         """
@@ -73,38 +79,38 @@ class AuthHandler:
         """
         # Validate the username
         if not self.validate_username(username):
-            print(
+            raise Exception(
                 "Invalid username. It must be at least 3 characters long and contain only letters, numbers, "
                 "underscores, or hyphens.")
-            return
 
         # Validate the password
         if not self.validate_password(password):
-            print("Invalid password. It must be at least 8 characters long and include at least one special character.")
-            return
+            raise Exception(
+                "Invalid password. It must be at least 8 characters long and include at least one special character.")
 
         # Hash the password using bcrypt
-        hashed_password = self.hash_password(password)
+        hashed_password = self.hash_password(password).decode('utf-8')
+
         try:
             # Insert the new user into the database
             insert_query = "INSERT INTO users (username, password) VALUES (%s, %s)"
             self.cursor.execute(insert_query, (username, hashed_password))
             self.conn.commit()
-            print(f"User '{username}' has been registered.")
         except mysql.connector.IntegrityError:
             # Handle case where username is already taken (violates UNIQUE constraint)
-            print("Username is already taken. Please choose another one.")
+            raise Exception("Username is already taken. Please choose another one.")
 
     def login_guest(self):
         """
         Logs in the user in guest mode.
         Creates a temporary user profile without saving it to the database.
+
+        :return: Dictionary containing guest user information.
         """
-        self.current_user = {
+        return {
             'username': 'Guest',
             'is_guest': True
         }
-        print("Logged in as guest.")
 
     def login_user(self, username, password):
         """
@@ -112,51 +118,72 @@ class AuthHandler:
 
         :param username: The username.
         :param password: The password.
+        :return: Dictionary containing user information.
+        :raises Exception: If login fails due to invalid credentials or account lockout.
         """
         # Retrieve the user from the database
         user = self.get_user(username)
         if not user:
             # User does not exist
-            print("Invalid username or password.")
-            return
+            raise Exception("Invalid username or password.")
 
         # Check if the account is locked due to too many failed attempts
         if self.is_locked_out(user):
             # Calculate remaining lockout time
             remaining = user['lockout_time'] - datetime.now()
             minutes, seconds = divmod(remaining.total_seconds(), 60)
-            print(f"Account is locked. Try again in {int(minutes)} minutes and {int(seconds)} seconds.")
-            return
+            raise Exception(f"Account is locked. Try again in {minutes} minutes and {seconds} seconds.")
 
         # Verify the password
-        if self.verify_password(password, user['password']):
+        stored_hashed_password = user['password'].encode('utf-8')
+        if self.verify_password(password, stored_hashed_password):
             # Successful login; reset failed attempts and lockout time
             self.reset_failed_attempts(username)
-            print(f"User '{username}' has been logged in.")
-            # Proceed with post-login actions (e.g., navigate to main menu)
+            return {
+                'username': username,
+                'is_guest': False
+            }
         else:
             # Incorrect password; increment failed attempts
             self.increment_failed_attempts(user)
             # Calculate attempts left before account lockout
             attempts_left = self.MAX_FAILED_ATTEMPTS - (user['failed_attempts'] + 1)
             if attempts_left > 0:
-                print(f"Invalid username or password. You have {attempts_left} attempts left.")
+                raise Exception(f"Invalid username or password. You have {attempts_left} attempts left.")
             else:
                 # Lock the account after exceeding max failed attempts
                 self.lock_account(username)
                 lockout_minutes = int(self.LOCKOUT_DURATION.total_seconds() / 60)
-                print(f"Too many failed attempts. Account '{username}' is locked for {lockout_minutes} minutes.")
+                raise Exception(
+                    f"Too many failed attempts. Account '{username}' is locked for {lockout_minutes} minutes.")
 
-    def logout_user(self):
+    def logout_user(self, token: str):
         """
-        Logs out the user.
+        Logs out the user by revoking their JWT token.
 
-        Note: Implementation depends on how user sessions are managed in the application.
+        :param token: The JWT access token to revoke.
         """
-        print("You have been logged out.")
-        # Implement logout logic here (e.g., clear session data)
+        try:
+            # Decode the token to ensure it's valid and extract its unique identifier (jti)
+            decoded_token = decode_token(token)
+            jti = decoded_token['jti']
+            # Add the jti to the revoked tokens set
+            self.revoked_tokens.add(jti)
+            print("User has been logged out and the token has been revoked.")
+        except Exception as e:
+            print(f"Error during logout: {e}")
+            raise Exception("Invalid token. Logout failed.")
 
-    def hash_password(self, password):
+    def is_token_revoked(self, jti: str) -> bool:
+        """
+        Checks if a token's jti is in the revoked tokens set.
+
+        :param jti: The unique identifier of the token.
+        :return: True if the token is revoked, False otherwise.
+        """
+        return jti in self.revoked_tokens
+
+    def hash_password(self, password: str) -> bytes:
         """
         Hashes the password using bcrypt.
 
@@ -166,7 +193,7 @@ class AuthHandler:
         # Generate a salt and hash the password
         return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
-    def verify_password(self, password, hashed):
+    def verify_password(self, password: str, hashed: bytes) -> bool:
         """
         Verifies that the provided password matches the hashed password.
 
@@ -177,7 +204,7 @@ class AuthHandler:
         # Compare the provided password with the stored hashed password
         return bcrypt.checkpw(password.encode(), hashed)
 
-    def get_user(self, username):
+    def get_user(self, username: str) -> Optional[dict]:
         """
         Retrieves a user's data from the database.
 
@@ -189,7 +216,7 @@ class AuthHandler:
         # Fetch one user record
         return self.cursor.fetchone()
 
-    def increment_failed_attempts(self, user):
+    def increment_failed_attempts(self, user: dict):
         """
         Increments the failed login attempts for a user.
 
@@ -201,7 +228,7 @@ class AuthHandler:
         self.cursor.execute(update_query, (new_attempts, user['username']))
         self.conn.commit()
 
-    def reset_failed_attempts(self, username):
+    def reset_failed_attempts(self, username: str):
         """
         Resets the failed login attempts and lockout time for a user.
 
@@ -211,7 +238,7 @@ class AuthHandler:
         self.cursor.execute(update_query, (username,))
         self.conn.commit()
 
-    def lock_account(self, username):
+    def lock_account(self, username: str):
         """
         Locks a user's account by setting the lockout_time to a future timestamp.
 
@@ -223,7 +250,7 @@ class AuthHandler:
         self.cursor.execute(update_query, (lockout_time, username))
         self.conn.commit()
 
-    def is_locked_out(self, user):
+    def is_locked_out(self, user: dict) -> bool:
         """
         Checks if a user's account is currently locked.
 
@@ -240,7 +267,7 @@ class AuthHandler:
         # Account is not locked
         return False
 
-    def validate_username(self, username):
+    def validate_username(self, username: str) -> bool:
         """
         Validates the username based on length and allowed characters.
 
@@ -255,7 +282,7 @@ class AuthHandler:
             return False
         return True
 
-    def validate_password(self, password):
+    def validate_password(self, password: str) -> bool:
         """
         Validates the password for minimum length and presence of special characters.
 
