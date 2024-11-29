@@ -1,51 +1,22 @@
-# main.py
+from flask import Flask
+from flask_cors import CORS
+from dotenv import load_dotenv
+import os
 
 from dotenv import load_dotenv
 from auth import AuthHandler
 from config import db_config
 
+load_dotenv()
 
-def run():
-    load_dotenv()
-    print("Welcome to the CineMood application.")
-    try:
-        auth = AuthHandler(db_config)
-    except Exception as e:
-        print(f"Error initializing AuthHandler: {e}")
-        return
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": ["http://localhost", "http://localhost:3000"]}})
 
-    while True:
-        print("\n1. Login")
-        print("2. Register")
-        print("3. Exit")
-        choice = input("Choose an option: ").strip()
 
-        if choice == '1':
-            username = input("Enter username: ").strip()
-            password = input("Enter password: ").strip()
-            if not username or not password:
-                print("Username and password cannot be empty.")
-                continue
-            try:
-                auth.login_user(username, password)
-            except Exception as e:
-                print(f"Error during login: {e}")
-        elif choice == '2':
-            username = input("Enter username: ").strip()
-            password = input("Enter password: ").strip()
-            if not username or not password:
-                print("Username and password cannot be empty.")
-                continue
-            try:
-                auth.register_user(username, password)
-            except Exception as e:
-                print(f"Error during registration: {e}")
-        elif choice == '3':
-            print("Goodbye!")
-            break
-        else:
-            print("Invalid choice. Please try again.")
+@app.route('/')
+def home():
+    return "CineMood API is running."
 
 
 if __name__ == "__main__":
-    run()
+    app.run(host="0.0.0.0", port=8000, debug=True)
