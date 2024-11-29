@@ -7,7 +7,7 @@ from unittest.mock import patch
 import mysql.connector
 from dotenv import load_dotenv
 
-from auth import AuthHandler
+from backend.auth import AuthHandler
 
 
 class TestAuthHandler(unittest.TestCase):
@@ -107,10 +107,10 @@ class TestAuthHandler(unittest.TestCase):
         password = "Test@1234"
         self.auth.register_user(username, password)
         # Attempt to register the same user again
-        with patch('sys.stdout', new_callable=StringIO) as fake_out:
+        with self.assertRaises(Exception) as context:
             self.auth.register_user(username, password)
-            # Check that the correct error message is printed
-            self.assertIn("Username is already taken. Please choose another one.", fake_out.getvalue())
+        # Check that the correct error message is printed
+        self.assertIn("Username is already taken. Please choose another one.", str(context.exception))
 
     def test_register_user_invalid_username(self):
         """
@@ -121,10 +121,10 @@ class TestAuthHandler(unittest.TestCase):
         """
         username = "ab"  # Too short
         password = "Test@1234"
-        with patch('sys.stdout', new_callable=StringIO) as fake_out:
+        with self.assertRaises(Exception) as context:
             self.auth.register_user(username, password)
-            # Check that the correct error message is printed
-            self.assertIn("Invalid username.", fake_out.getvalue())
+        # Check that the correct error message is printed
+        self.assertIn("Invalid username.", str(context.exception))
 
     def test_register_user_invalid_password(self):
         """
@@ -135,10 +135,10 @@ class TestAuthHandler(unittest.TestCase):
         """
         username = "validuser"
         password = "password"  # No special character
-        with patch('sys.stdout', new_callable=StringIO) as fake_out:
+        with self.assertRaises(Exception) as context:
             self.auth.register_user(username, password)
-            # Check that the correct error message is printed
-            self.assertIn("Invalid password.", fake_out.getvalue())
+        # Check that the correct error message is printed
+        self.assertIn("Invalid password.", str(context.exception))
 
     def test_login_user_success(self):
         """
@@ -151,10 +151,11 @@ class TestAuthHandler(unittest.TestCase):
         username = "loginuser"
         password = "Login@1234"
         self.auth.register_user(username, password)
-        with patch('sys.stdout', new_callable=StringIO) as fake_out:
-            self.auth.login_user(username, password)
-            # Check that the login success message is printed
-            self.assertIn(f"User '{username}' has been logged in.", fake_out.getvalue())
+        # Attempt to log in with correct credentials
+        user_info = self.auth.login_user(username, password)
+        # Check that the login was successful
+        self.assertEqual(user_info['username'], username)
+        self.assertFalse(user_info['is_guest'])
         # Check if failed_attempts reset to 0 after successful login
         self.auth.cursor.execute("SELECT failed_attempts FROM users WHERE username = %s", (username,))
         result = self.auth.cursor.fetchone()
@@ -173,8 +174,14 @@ class TestAuthHandler(unittest.TestCase):
         self.auth.register_user(username, password)
         wrong_password = "Wrong@1234"
         # Attempt to log in with the wrong password until account is locked
-        for _ in range(AuthHandler.MAX_FAILED_ATTEMPTS):
-            self.auth.login_user(username, wrong_password)
+        for attempt in range(AuthHandler.MAX_FAILED_ATTEMPTS):
+            with  self.assertRaises(Exception) as context:
+                self.auth.login_user(username, wrong_password)
+            if attempt < AuthHandler.MAX_FAILED_ATTEMPTS - 1:
+                self.assertIn("Invalid username or password.", str(context.exception))
+            else:
+                self.assertIn(f"Too many failed attempts. Account '{username}' is locked for", str(context.exception))
+
         # Check if account is locked by verifying lockout_time is set
         self.auth.cursor.execute("SELECT lockout_time FROM users WHERE username = %s", (username,))
         result = self.auth.cursor.fetchone()
@@ -204,24 +211,32 @@ class TestAuthHandler(unittest.TestCase):
         - Attempts to log in again with the correct password.
         - Verifies that the user can log in and failed_attempts are reset.
         """
-        # Register a user and lock the account
+        # Register a user and lock the account by entering the wrong password multiple times.
         username = "unlockuser"
         password = "Unlock@1234"
         self.auth.register_user(username, password)
         wrong_password = "Wrong@1234"
         for _ in range(AuthHandler.MAX_FAILED_ATTEMPTS):
-            self.auth.login_user(username, wrong_password)
+            with self.assertRaises(Exception) as context:
+                self.auth.login_user(username, wrong_password)
+
+        # Verify that the account is locked
+        self.auth.cursor.execute("SELECT lockout_time FROM users WHERE username = %s", (username,))
+        result = self.auth.cursor.fetchone()
+        self.assertIsNotNone(result['lockout_time'])
+
         # Simulate time after lockout duration to ensure account unlock works
         future_time = datetime.now() + timedelta(minutes=16)
-        with patch('auth.datetime') as mock_datetime:
+        with patch('backend.auth.datetime') as mock_datetime:
             # Mock datetime.now() to return a future time
             mock_datetime.now.return_value = future_time
             # Ensure other datetime functions work normally
             mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
-            with patch('sys.stdout', new_callable=StringIO) as fake_out:
-                self.auth.login_user(username, password)
-                # Verify user can log in after lockout period
-                self.assertIn(f"User '{username}' has been logged in.", fake_out.getvalue())
+            # Attempt to login again with correct password
+            user_info = self.auth.login_user(username, password)
+            self.assertEqual(user_info['username'], username)
+            self.assertFalse(user_info['is_guest'])
+
         # Verify that failed_attempts counter is reset after successful login
         self.auth.cursor.execute("SELECT failed_attempts FROM users WHERE username = %s", (username,))
         result = self.auth.cursor.fetchone()
@@ -232,17 +247,12 @@ class TestAuthHandler(unittest.TestCase):
         Test logging in as a guest.
 
         - Logs in as a guest.
-        - Checks that `current_user` is set correctly.
-        - Verifies that `is_guest` is True.
+        - Verifies that the returned guest information is correct.
+        - Confirms that `is_guest` is True.
         """
-        with patch('sys.stdout', new_callable=StringIO) as fake_out:
-            self.auth.login_guest()
-            # Check that the guest login success message is printed
-            self.assertIn("Logged in as guest.", fake_out.getvalue())
-        # Verify that current_user is set correctly
-        self.assertIsNotNone(self.auth.current_user)
-        self.assertEqual(self.auth.current_user['username'], 'Guest')
-        self.assertTrue(self.auth.current_user['is_guest'])
+        guest_info = self.auth.login_guest()
+        self.assertEqual(guest_info['username'], 'Guest')
+        self.assertTrue(guest_info['is_guest'])
 
     def test_guest_does_not_create_user_in_db(self):
         """
@@ -252,9 +262,10 @@ class TestAuthHandler(unittest.TestCase):
         - Checks that no user with username 'Guest' exists in the database.
         """
         # Log in as guest
-        with patch('sys.stdout', new_callable=StringIO) as fake_out:
-            self.auth.login_guest()
-            self.assertIn("Logged in as guest.", fake_out.getvalue())
+        guest_info = self.auth.login_guest()
+        self.assertEqual(guest_info['username'], 'Guest')
+        self.assertTrue(guest_info['is_guest'])
+
         # Verify that 'Guest' does not exist in the users table
         self.auth.cursor.execute("SELECT * FROM users WHERE username = %s", ('Guest',))
         result = self.auth.cursor.fetchone()
