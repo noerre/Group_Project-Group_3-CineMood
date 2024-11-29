@@ -8,6 +8,8 @@ import os
 from dotenv import load_dotenv
 from auth import AuthHandler
 from config import db_config
+from schemas import RegisterRequestSchema, LoginRequestSchema, AuthResponseSchema
+
 
 load_dotenv()
 
