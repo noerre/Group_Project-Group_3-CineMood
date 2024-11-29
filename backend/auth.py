@@ -53,7 +53,7 @@ class AuthHandler:
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
             username VARCHAR(50) UNIQUE NOT NULL,
-            password BINARY(60) NOT NULL,
+            password VARCHAR(255) NOT NULL,
             failed_attempts INT DEFAULT 0,
             lockout_time DATETIME NULL
         )
@@ -89,7 +89,8 @@ class AuthHandler:
                 "Invalid password. It must be at least 8 characters long and include at least one special character.")
 
         # Hash the password using bcrypt
-        hashed_password = self.hash_password(password)
+        hashed_password = self.hash_password(password).decode('utf-8')
+
         try:
             # Insert the new user into the database
             insert_query = "INSERT INTO users (username, password) VALUES (%s, %s)"
@@ -134,7 +135,8 @@ class AuthHandler:
             raise Exception(f"Account is locked. Try again in {minutes} minutes and {seconds} seconds.")
 
         # Verify the password
-        if self.verify_password(password, user['password']):
+        stored_hashed_password = user['password'].encode('utf-8')
+        if self.verify_password(password, stored_hashed_password):
             # Successful login; reset failed attempts and lockout time
             self.reset_failed_attempts(username)
             return {

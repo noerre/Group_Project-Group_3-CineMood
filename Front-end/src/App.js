@@ -1,7 +1,11 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import './App.css';
 import SearchIcon from './search.svg'
 import MovieCard from "./MovieCard";
+import Login from "./Login";
+import Register from "./Register";
+import Navbar from "./Navbar";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 //c032e2d7
 
@@ -19,45 +23,52 @@ const App = () => {
     }
 
     return (
-        <div className='app'>
-            <h1>CineMood</h1>
-
-            <div className= 'search'>
-            <input
-                placeholder ="Search for movies"
-            value = {searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <img
-                src= {SearchIcon}
-                alt="search"
-                onClick={() => searchMovies(searchTerm)}
-            />
+        <Router>
+            <Navbar />
+            <div className='app'>
+                <Routes>
+                    <Route path="/" element={
+                        <>
+                            <h1>CineMood</h1>
+                            <div className='search'>
+                                <input
+                                    placeholder="Search for movies"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            searchMovies(searchTerm);
+                                        }
+                                    }}
+                                />
+                                <img
+                                    src={SearchIcon}
+                                    alt="search"
+                                    onClick={() => searchMovies(searchTerm)}
+                                />
+                            </div>
+                            {
+                                movies.length > 0 ? (
+                                    <div className="container">
+                                        {movies.map((movie) => (
+                                            <MovieCard key={movie.imdbID} movie={movie} />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="empty">
+                                        <h2>No movies found</h2>
+                                    </div>
+                                )
+                            }
+                        </>
+                    } />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
             </div>
-
-        {
-            movies?.length >0 ? (
-                <div className = "container">
-                    {movies.map((movie) => (
-                        <MovieCard movie={movie}/>
-                    ))}
-                </div>
-            ) :
-            (
-                <div className="empty">
-                    <h2>No movies found</h2>
-                </div>            
-            )
-
-        }
-           
-
-
-            
-            
-            </div>
+        </Router>
     );
-
-}
+};
 
 export default App;
