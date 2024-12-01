@@ -32,8 +32,7 @@ class DatabaseHandler:
             movie_data["title"],
             movie_data["release_year"],
             movie_data["director_id"],
-            movie_data["country_id"],
-            movie_data["platform_id"]
+            movie_data["country_id"]
         ))
         self.connection.commit()
 
