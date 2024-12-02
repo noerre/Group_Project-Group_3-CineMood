@@ -14,6 +14,7 @@ db_config = {
     'password': os.getenv('DB_PASSWORD'),
 }
 
+
 # Initialize Database
 def init_db():
     try:
@@ -21,20 +22,46 @@ def init_db():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        # Create database if it doesn't exist
-        cursor.execute("CREATE DATABASE IF NOT EXISTS cine_mood;")
-        print("Database 'cine_mood' created or already exists.")
+        # Drop database if it exists
+        cursor.execute("DROP DATABASE IF EXISTS cine_mood;")
+        print("Database 'cine_mood' dropped.")
+
+        # Create database
+        cursor.execute("CREATE DATABASE cine_mood;")
+        print("Database 'cine_mood' created.")
 
         # Close connection
         cursor.close()
         conn.close()
-    except errors.ProgrammingError as e:
-        if e.errno == 1049:  # Error code for "Unknown database"
-            raise Exception("Database does not exist and could not be created.")
-        else:
-            raise e
     except Exception as ex:
         print(f"An error occurred: {ex}")
 
-# Call the function
+
+# Execute SQL file
+def execute_sql_file(file_path):
+    try:
+        # Connect to the database
+        conn = mysql.connector.connect(**db_config, database='cine_mood')
+        cursor = conn.cursor()
+
+        # Read the SQL file
+        with open(file_path, 'r') as sql_file:
+            sql_commands = sql_file.read()
+
+        # Execute each command in the SQL file
+        for command in sql_commands.split(';'):
+            if command.strip():  # Skip empty commands
+                cursor.execute(command)
+
+        # Commit changes and close connection
+        conn.commit()
+        print(f"Executed SQL file: {file_path}")
+        cursor.close()
+        conn.close()
+    except Exception as ex:
+        print(f"An error occurred while executing the SQL file: {ex}")
+
+
+# Call the functions
 init_db()
+execute_sql_file('cinemood_database_creation.sql')

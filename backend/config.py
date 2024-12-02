@@ -10,5 +10,6 @@ db_config = {
     'user': os.getenv('DB_USER'),
     'password': os.getenv('DB_PASSWORD'),
     'database': os.getenv('DB_NAME'),
-    'raise_on_warnings': True
+    'raise_on_warnings': True,
+    'api_key': os.getenv('API_KEY')
 }

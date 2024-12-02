@@ -5,7 +5,7 @@ from mysql.connector import Error
 class DatabaseHandler:
     def __init__(self, host, user, password, database):
         try:
-            self.connection = mysql.connector(
+            self.connection = mysql.connector.connect(
                 host=host,
                 user=user,
                 password=password,
@@ -81,3 +81,6 @@ class DatabaseHandler:
         """
         cursor.execute(query, (movie_id,))
         return cursor.fetchall()
+
+# if __name__ == "__main__":
+#     DatabaseHandler('localhost', 'root', 'xv3on5', 'cine_mood')
