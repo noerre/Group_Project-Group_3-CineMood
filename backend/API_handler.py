@@ -1,9 +1,10 @@
 import requests
 from database_handler import DatabaseHandler
-from config import db_config
+from config import api_config
 
 from tmdbv3api import TMDb, Discover
 from config import tmdb_api_key
+from mood_to_genres import get_genre_mapping
 
 class TMDbAPIHandler:
     BASE_URL = "https://api.themoviedb.org/3"
@@ -158,29 +159,6 @@ def fetch_movies_by_genre(genre_name, limit=5):
         {"title": m['title'], "release_year": m['release_date'].split('-')[0], "overview": m['overview']}
         for m in results[:limit]
     ]
-
-
-def get_genre_mapping():
-    """
-    Returns a dictionary of TMDb genres and their IDs.
-    """
-    return {
-        "action": 28,
-        "adventure": 12,
-        "comedy": 35,
-        "drama": 18,
-        "romance": 10749,
-        "thriller": 53,
-        "documentary": 99,
-        "family": 10751,
-        "classic": 10402,  # Musical
-        "musical": 10402
-    }
-
-
-
-
-
 
 
 

@@ -11,6 +11,9 @@ db_config = {
     'password': os.getenv('DB_PASSWORD'),
     'database': os.getenv('DB_NAME'),
     'raise_on_warnings': True,
-    'api_key': os.getenv('API_KEY')
+}
+api_config = {
+    'api_key': os.getenv('API_KEY'),
+    'api_version': os.getenv('API_VERSION')
 }
 tmdb_api_key = os.getenv('TMDB_API_KEY')

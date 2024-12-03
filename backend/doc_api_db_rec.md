@@ -2,6 +2,7 @@
 app.py run flask, has login utilities
 
 API_handler.py has api utilities, it has for now also Aleksandra code- need to be merged together
+https://pypi.org/project/tmdbv3api/
 
 app_recomendation.py has Aleksandra code, flask
 
