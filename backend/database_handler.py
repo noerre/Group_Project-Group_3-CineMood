@@ -2,10 +2,12 @@ import mysql.connector
 from mysql.connector import Error
 from config import db_config
 
+
 class DatabaseHandler:
     def __init__(self, host, user, password, database):
         try:
             self.connection = mysql.connector.connect(
+
                 host=host,
                 user=user,
                 password=password,
@@ -33,7 +35,6 @@ class DatabaseHandler:
             movie_data["release_year"],
             movie_data["director_id"],
             movie_data["country_id"],
-            movie_data["platform_id"]
         ))
         self.connection.commit()
 
@@ -81,6 +82,7 @@ class DatabaseHandler:
         """
         cursor.execute(query, (movie_id,))
         return cursor.fetchall()
+
 
 
 

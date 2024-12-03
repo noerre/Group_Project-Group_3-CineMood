@@ -6,6 +6,7 @@ from tmdbv3api import TMDb, Discover
 from config import tmdb_api_key
 from mood_to_genres import get_genre_mapping
 
+
 class TMDbAPIHandler:
     BASE_URL = "https://api.themoviedb.org/3"
 
@@ -19,15 +20,10 @@ class TMDbAPIHandler:
 
     def __init__(self):
         # Initialize API key
-        #self.api_key = "48bb9ee8045809c1d8bc398b65b910a2"  # Replace with your actual TMDb API key
-        # Initialize API key  with dotenv and file config
         self.api_key=db_config['api_key']
         if not self.api_key:
             raise ValueError("API key not found.")
 
-        # Initialize DatabaseHandler
-        # self.db_handler = DatabaseHandler(host="localhost", user="root", password="xv3on5",
-        #                                   database="cine_mood")  # Update with your DB credentials
         # Initialize DatabaseHandler with dotenv and file config
         self.db_handler = DatabaseHandler(
             host=db_config['host'],
@@ -55,6 +51,7 @@ class TMDbAPIHandler:
             raise ValueError(f"Unexpected response from TMDb API: {response.status_code}")
 
         print("TMDb API connection established successfully.")
+
 
     def get_movie_details(self, movie_id):
       # Fetch detailed information about a movie, including director and country ID
@@ -173,5 +170,6 @@ if __name__ == "__main__":
     # for genre in genres:
     #     print(f"\nFetching movies for the '{genre}' genre...")
     #     tmdb_handler.get_movies_by_genre(genre)
+
 
 
