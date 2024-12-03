@@ -1,5 +1,10 @@
 import requests
 from database_handler import DatabaseHandler
+from config import api_config
+
+from tmdbv3api import TMDb, Discover
+from config import tmdb_api_key
+from mood_to_genres import get_genre_mapping
 
 
 class TMDbAPIHandler:
@@ -15,13 +20,38 @@ class TMDbAPIHandler:
 
     def __init__(self):
         # Initialize API key
-        self.api_key = "48bb9ee8045809c1d8bc398b65b910a2"  # Replace with your actual TMDb API key
+        self.api_key=db_config['api_key']
         if not self.api_key:
             raise ValueError("API key not found.")
 
-        # Initialize DatabaseHandler
-        self.db_handler = DatabaseHandler(host="localhost", user="root", password="password",
-                                          database="movies_db")  # Update with your DB credentials
+        # Initialize DatabaseHandler with dotenv and file config
+        self.db_handler = DatabaseHandler(
+            host=db_config['host'],
+            user=db_config['user'],
+            password=db_config['password'],
+            database=db_config['database']
+        )
+
+    def test_connection(self):
+        """Check if the API key (bearer token) is valid by making a simple request to TMDb API."""
+        test_url = f"{self.BASE_URL}/authentication"  # Correct TMDb endpoint
+        headers = {
+            "accept": "application/json",
+            "Authorization": f"Bearer {self.api_key}"  # Pass the API key as a bearer token
+        }
+
+        try:
+            response = requests.get(test_url, headers=headers, timeout=10)
+            response.raise_for_status()  # Raise an exception for HTTP errors
+        except requests.exceptions.RequestException as e:
+            raise ConnectionError(f"Failed to connect to TMDb API: {e}")
+
+        # Optional: Validate the response
+        if response.status_code != 200:
+            raise ValueError(f"Unexpected response from TMDb API: {response.status_code}")
+
+        print("TMDb API connection established successfully.")
+
 
     def get_movie_details(self, movie_id):
       # Fetch detailed information about a movie, including director and country ID
@@ -91,12 +121,55 @@ class TMDbAPIHandler:
             print(f"An unexpected error occurred: {err}")
 
 
+## this is from Aleksandra files:
+
+
+# Configure TMDb
+tmdb = TMDb()
+tmdb.api_key = tmdb_api_key
+tmdb.language = 'en'
+
+
+def fetch_movies_by_genre(genre_name, limit=5):
+    """
+    Fetches movies based on genre name from TMDb.
+
+    :param genre_name: The genre to search for.
+    :param limit: The number of movies to fetch.
+    :return: List of movies with title, release year, and overview.
+    """
+    discover = Discover()
+    genre_map = get_genre_mapping()  # Map genre names to TMDb genre IDs
+    genre_id = genre_map.get(genre_name.lower())
+
+    if not genre_id:
+        raise ValueError(f"Genre '{genre_name}' not found in TMDb.")
+
+    # Fetch movies for the genre
+    results = discover.discover_movies({
+        'with_genres': genre_id,
+        'sort_by': 'popularity.desc'
+    })
+
+    # Limit results and return necessary fields
+    return [
+        {"title": m['title'], "release_year": m['release_date'].split('-')[0], "overview": m['overview']}
+        for m in results[:limit]
+    ]
+
+
+
 # main function
 if __name__ == "__main__":
     tmdb_handler = TMDbAPIHandler()
+    tmdb_handler.test_connection()
+    tmdb_handler.get_movie_details('181812')
 
-    # Example of fetching movies by genre and storing them in the database
-    genres = ["Action", "Comedy", "Drama", "Adventure"]
-    for genre in genres:
-        print(f"\nFetching movies for the '{genre}' genre...")
-        tmdb_handler.get_movies_by_genre(genre)
+    # # Example of fetching movies by genre and storing them in the database
+    # genres = ["Action", "Comedy", "Drama", "Adventure"]
+    # for genre in genres:
+    #     print(f"\nFetching movies for the '{genre}' genre...")
+    #     tmdb_handler.get_movies_by_genre(genre)
+
+
+
