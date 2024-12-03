@@ -13,3 +13,4 @@ db_config = {
     'raise_on_warnings': True,
     'api_key': os.getenv('API_KEY')
 }
+tmdb_api_key = os.getenv('TMDB_API_KEY')

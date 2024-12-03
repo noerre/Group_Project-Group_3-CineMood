@@ -1,6 +1,6 @@
 # DROP DATABASE cine_mood;
-CREATE DATABASE cine_mood;
- 
+# CREATE DATABASE cine_mood;
+
 USE cine_mood;
 
 # Table creation 
