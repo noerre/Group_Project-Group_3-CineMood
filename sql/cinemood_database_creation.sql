@@ -33,19 +33,26 @@ CREATE TABLE platform (
     p_web VARCHAR(100) NOT NULL
 );
 
+
 CREATE TABLE movie (
 	id INT PRIMARY KEY, 
     title VARCHAR(255) NOT NULL, 
     release_year YEAR, 
     director_id INT, 
     country_id CHAR(2), 
-    platform_id INT, 
     # foreign keys
     CONSTRAINT fk_movie_director FOREIGN KEY (director_id) REFERENCES director(id),
-	CONSTRAINT fk_movie_country FOREIGN KEY (country_id) REFERENCES country(id),
-    CONSTRAINT fk_movie_platform FOREIGN KEY (platform_id) REFERENCES platform(id)
+	CONSTRAINT fk_movie_country FOREIGN KEY (country_id) REFERENCES country(id)
 );
-    
+
+CREATE TABLE movie_platform (
+	platform_id INT NOT NULL, 
+    movie_id INT NOT NULL, 
+    PRIMARY KEY (platform_id, movie_id), 
+    CONSTRAINT fk_movie_platform_platf FOREIGN KEY (platform_id) REFERENCES platform(id),
+    CONSTRAINT fk_movie_platform_movie FOREIGN KEY (movie_id) REFERENCES movie(id)
+);
+
 CREATE TABLE cast (
 	actor_id INT NOT NULL, 
     movie_id INT NOT NULL, 
