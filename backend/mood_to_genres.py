@@ -3,46 +3,45 @@ mood_to_genre_mapping = {
     "sad": ["drama", "romance", "history", "war"],
     "excited": ["action", "thriller", "crime", "science_fiction", "western"],
     "relaxed": ["documentary", "family", "music", "tv_movie"],
-    "nostalgic": ["classic", "musical", "fantasy", "history"],
+    "nostalgic": ["classic", "musical", "history"],
     "curious": ["mystery", "science_fiction", "thriller"],
-    "chill": ["documentary", "animation", "music", "family"]
+    "chill": [ "animation", "music", "family"]
 }
 
 mood_isnot_genre_mapping = {
     "happy": [
-        "drama", "history", "war", "crime", "science_fiction",
-        "classic", "musical", "mystery", "thriller", "documentary",
-        "western", "action", "music"
+        "drama", "history", "war", "crime",
+        "classic", "mystery", "thriller", "documentary",
+        "western", "action",
     ],
     "sad": [
-        "comedy", "adventure", "animation", "fantasy", "family", "science_fiction",
-        "tv_movie", "classic", "musical", "mystery", "thriller", "documentary",
-        "western", "action", "music"
+        "animation", "fantasy", "family",
+        "mystery", "western", "action", "music"
     ],
     "excited": [
-        "comedy", "adventure", "animation", "fantasy", "family", "drama",
+        "fantasy", "family", "drama",
         "romance", "history", "war", "documentary", "classic", "musical",
         "tv_movie", "music"
     ],
     "relaxed": [
-        "comedy", "adventure", "animation", "fantasy", "family", "action",
-        "thriller", "crime", "science_fiction", "western", "drama", "romance",
+        "fantasy", "family", "action",
+        "thriller", "crime", "western", "drama", "romance",
         "classic", "musical", "mystery", "war"
     ],
     "nostalgic": [
         "comedy", "adventure", "animation", "family", "action", "thriller",
-        "crime", "science_fiction", "western", "tv_movie", "music", "documentary",
-        "drama", "romance"
+        "crime", "science_fiction", "tv_movie", "music", "documentary",
+        "romance"
     ],
     "curious": [
-        "comedy", "adventure", "animation", "family", "drama", "romance",
+        "comedy", "animation", "family", "drama", "romance",
         "history", "war", "classic", "musical", "tv_movie", "music",
-        "documentary", "western", "action"
+        "documentary", "western",
     ],
     "chill": [
         "action", "thriller", "crime", "science_fiction", "western", "drama",
         "romance", "history", "war", "classic", "musical", "mystery",
-        "fantasy", "adventure", "comedy"
+        "fantasy",
     ]
 }
 
