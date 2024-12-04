@@ -637,3 +637,4 @@ class DatabaseHandler:
             print("No DB connection")
             return None
 
+
