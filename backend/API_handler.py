@@ -1,6 +1,6 @@
 import requests
 from database_handler import DatabaseHandler
-from config import api_config
+from config import api_config, db_config
 
 from tmdbv3api import TMDb, Discover
 from config import tmdb_api_key
@@ -20,7 +20,7 @@ class TMDbAPIHandler:
 
     def __init__(self):
         # Initialize API key
-        self.api_key=db_config['api_key']
+        self.api_key=api_config['api_key']
         if not self.api_key:
             raise ValueError("API key not found.")
 
@@ -151,7 +151,6 @@ def fetch_movies_by_genre(genre_name, mood, limit=10):
         'sort_by': 'popularity.desc'
     })
 
-    # Prepare movie details (add genre IDs for filtering)
     movies = [
         {
             "title": m['title'],
@@ -168,7 +167,19 @@ def fetch_movies_by_genre(genre_name, mood, limit=10):
     # Limit results
     return filtered_movies[:limit]
 
+def fetch_more_info_about_movie():
+    """
+    Get info about movies to populate database
+    :return:
+    """
+    print("placeholder")
 
+def fetch_by_movie_name():
+    """
+    Get info about movies to return to search engine
+    :return:
+    """
+    print("placeholder")
 
 # main function
 if __name__ == "__main__":
