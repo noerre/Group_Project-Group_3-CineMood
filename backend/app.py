@@ -244,12 +244,21 @@ def create_app(test_config=None):
             print(f"Error: {e}")
             return jsonify({"error": str(e)}), 400
 
-    @app.route('/movie_history', methods=['POST'])
-    def get_history():
+    @app.route('/movie_history', methods=[''])
+    def get_user_movie_history():
         """
         get user movie history and show it
         :return:
         """
+
+    @app.route('/movie_history', methods=[''])
+    def add_to_user_movie_history():
+
+    @app.route('/search', methods=[''])
+    def get_movie_info():
+
+    @app.route('/search', methods=[''])
+    def get_movie_info():
 
 
     return app
