@@ -3,7 +3,7 @@ from mood_to_genres import get_genres_for_mood
 from API_handler import fetch_movies_by_genre
 
 
-def recommend_movies(user_id, mood, limit=5):
+def recommend_movies(user_id, mood, limit=10):
     """
     Recommends movies based on user's mood by fetching data from TMDb.
 
@@ -18,7 +18,7 @@ def recommend_movies(user_id, mood, limit=5):
 
     recommendations = []
     for genre in genres:
-        recommendations.extend(fetch_movies_by_genre(genre, limit=limit // len(genres)))
+        recommendations.extend(fetch_movies_by_genre(genre, mood, limit=limit // len(genres)))
 
     return recommendations
 

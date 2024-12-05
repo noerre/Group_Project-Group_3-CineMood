@@ -55,6 +55,29 @@ def get_genres_for_mood(mood):
     """
     return mood_to_genre_mapping.get(mood.lower(), [])
 
+
+def filter_movies_by_mood(movies, mood):
+    """
+    Filters the list of movies based on the genres to exclude for a given mood.
+
+    :param movies: List of movies with genre IDs and other details.
+    :param mood: The user's mood to filter movies by.
+    :return: Filtered list of movies.
+    """
+    # Map genre names to genre IDs
+    genre_map = get_genre_mapping()  # Assume this returns {genre_name: genre_id}
+
+    # Get excluded genre IDs for the mood
+    excluded_genres = set(genre_map.get(genre.lower()) for genre in mood_isnot_genre_mapping.get(mood, []))
+
+    # Filter out movies with any excluded genres
+    filtered_movies = [
+        movie for movie in movies
+        if not excluded_genres.intersection(set(movie['genre_ids']))
+    ]
+
+    return filtered_movies
+
 def get_genre_mapping():
     """
     Returns a dictionary of TMDb genres and their IDs.

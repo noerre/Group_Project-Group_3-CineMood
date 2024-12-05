@@ -4,7 +4,7 @@ from config import api_config
 
 from tmdbv3api import TMDb, Discover
 from config import tmdb_api_key
-from mood_to_genres import get_genre_mapping
+from mood_to_genres import get_genre_mapping, filter_movies_by_mood
 
 
 class TMDbAPIHandler:
@@ -130,7 +130,7 @@ tmdb.api_key = tmdb_api_key
 tmdb.language = 'en'
 
 
-def fetch_movies_by_genre(genre_name, limit=5):
+def fetch_movies_by_genre(genre_name, mood, limit=10):
     """
     Fetches movies based on genre name from TMDb.
 
@@ -151,11 +151,22 @@ def fetch_movies_by_genre(genre_name, limit=5):
         'sort_by': 'popularity.desc'
     })
 
-    # Limit results and return necessary fields
-    return [
-        {"title": m['title'], "release_year": m['release_date'].split('-')[0], "overview": m['overview']}
-        for m in results[:limit]
+    # Prepare movie details (add genre IDs for filtering)
+    movies = [
+        {
+            "title": m['title'],
+            "release_year": m['release_date'].split('-')[0],
+            "overview": m['overview'],
+            "genre_ids": m['genre_ids']
+        }
+        for m in results
     ]
+
+    # Filter movies by mood
+    filtered_movies = filter_movies_by_mood(movies, mood)
+
+    # Limit results
+    return filtered_movies[:limit]
 
 
 

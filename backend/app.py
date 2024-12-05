@@ -243,6 +243,7 @@ def create_app(test_config=None):
         except Exception as e:
             print(f"Error: {e}")
             return jsonify({"error": str(e)}), 400
+
     return app
 
 
