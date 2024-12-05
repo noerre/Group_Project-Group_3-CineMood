@@ -28,7 +28,6 @@ class DatabaseHandler:
 
     def test_connection(self):
         if self.connection and self.connection.is_connected():
-            # print("success")
             return True
         else:
             print("Failed connection")
@@ -47,11 +46,9 @@ class DatabaseHandler:
             cursor = self.connection.cursor()
             try:
                 query = f"SELECT id FROM {table} WHERE {column} = %s"
-                # print(query)
                 cursor.execute(query, (value,))
                 result = cursor.fetchone()
                 if result:
-                    # print(result)
                     return result[0]
                 else:
                     return None
