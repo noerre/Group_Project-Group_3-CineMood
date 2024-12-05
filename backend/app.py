@@ -5,9 +5,9 @@ from flask_jwt_extended import (
 import os
 
 from dotenv import load_dotenv
-from backend.auth import AuthHandler
-from backend.config import db_config
-from backend.schemas import RegisterRequestSchema, LoginRequestSchema, AuthResponseSchema
+from auth import AuthHandler
+from config import db_config
+from schemas import RegisterRequestSchema, LoginRequestSchema, AuthResponseSchema
 from recomendation_engine import recommend_movies
 from mood_to_genres import get_genres_for_mood
 
@@ -243,6 +243,15 @@ def create_app(test_config=None):
         except Exception as e:
             print(f"Error: {e}")
             return jsonify({"error": str(e)}), 400
+
+    @app.route('/movie_history', methods=['POST'])
+    def get_history():
+        """
+        get user movie history and show it
+        :return:
+        """
+
+
     return app
 
 

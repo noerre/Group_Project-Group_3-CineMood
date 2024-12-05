@@ -1,9 +1,19 @@
 # CFG-Group_Project-Group_3-CineMood
 
 
+To ensure everything is installed you can use install.sh.
+
+Type into git bash terminal command:
+
+````commandline
+./install.sh
+````
+And answer questions prompted on terminal.
+If it stopes working because you need to instal something from external source, restart install.sh again.
+
 We are using dotenv, all login credentials will be in .env file that is .gitignore 
 
-how should .env look like:
+how should .env look like in :
 
 ````
 DB_HOST=localhost
@@ -16,3 +26,22 @@ API_KEY=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYzkxMWYxYzZhYTBkYmQxZGMwMGE5MmE4NTg5ZDN
 
 ````
 those are Pamela's api key, change your password
+
+
+To run app: Open 2 git bash windows (with open one git bash window click Alt + F2)
+in first window: 
+````
+python backend/app.py
+```` 
+
+enter Front-end in the other window:
+````
+cd Front-end
+npm start
+````
+
+Acces CineMood in browser with:
+
+````
+http://localhost:3000
+````

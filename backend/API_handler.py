@@ -1,10 +1,10 @@
 import requests
 from database_handler import DatabaseHandler
-from config import api_config
+from config import api_config, db_config
 
 from tmdbv3api import TMDb, Discover
 from config import tmdb_api_key
-from mood_to_genres import get_genre_mapping
+from mood_to_genres import get_genre_mapping, filter_movies_by_mood
 
 
 class TMDbAPIHandler:
@@ -20,7 +20,7 @@ class TMDbAPIHandler:
 
     def __init__(self):
         # Initialize API key
-        self.api_key=db_config['api_key']
+        self.api_key=api_config['api_key']
         if not self.api_key:
             raise ValueError("API key not found.")
 
@@ -130,7 +130,7 @@ tmdb.api_key = tmdb_api_key
 tmdb.language = 'en'
 
 
-def fetch_movies_by_genre(genre_name, limit=5):
+def fetch_movies_by_genre(genre_name, mood, limit=10):
     """
     Fetches movies based on genre name from TMDb.
 
@@ -151,13 +151,35 @@ def fetch_movies_by_genre(genre_name, limit=5):
         'sort_by': 'popularity.desc'
     })
 
-    # Limit results and return necessary fields
-    return [
-        {"title": m['title'], "release_year": m['release_date'].split('-')[0], "overview": m['overview']}
-        for m in results[:limit]
+    movies = [
+        {
+            "title": m['title'],
+            "release_year": m['release_date'].split('-')[0],
+            "overview": m['overview'],
+            "genre_ids": m['genre_ids']
+        }
+        for m in results
     ]
 
+    # Filter movies by mood
+    filtered_movies = filter_movies_by_mood(movies, mood)
 
+    # Limit results
+    return filtered_movies[:limit]
+
+def fetch_more_info_about_movie():
+    """
+    Get info about movies to populate database
+    :return:
+    """
+    print("placeholder")
+
+def fetch_by_movie_name():
+    """
+    Get info about movies to return to search engine
+    :return:
+    """
+    print("placeholder")
 
 # main function
 if __name__ == "__main__":

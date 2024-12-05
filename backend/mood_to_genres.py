@@ -3,46 +3,45 @@ mood_to_genre_mapping = {
     "sad": ["drama", "romance", "history", "war"],
     "excited": ["action", "thriller", "crime", "science_fiction", "western"],
     "relaxed": ["documentary", "family", "music", "tv_movie"],
-    "nostalgic": ["classic", "musical", "fantasy", "history"],
+    "nostalgic": ["classic", "musical", "history"],
     "curious": ["mystery", "science_fiction", "thriller"],
-    "chill": ["documentary", "animation", "music", "family"]
+    "chill": [ "animation", "music", "family"]
 }
 
 mood_isnot_genre_mapping = {
     "happy": [
-        "drama", "history", "war", "crime", "science_fiction",
-        "classic", "musical", "mystery", "thriller", "documentary",
-        "western", "action", "music"
+        "drama", "history", "war", "crime",
+        "classic", "mystery", "thriller", "documentary",
+        "western", "action",
     ],
     "sad": [
-        "comedy", "adventure", "animation", "fantasy", "family", "science_fiction",
-        "tv_movie", "classic", "musical", "mystery", "thriller", "documentary",
-        "western", "action", "music"
+        "animation", "fantasy", "family",
+        "mystery", "western", "action", "music"
     ],
     "excited": [
-        "comedy", "adventure", "animation", "fantasy", "family", "drama",
+        "fantasy", "family", "drama",
         "romance", "history", "war", "documentary", "classic", "musical",
         "tv_movie", "music"
     ],
     "relaxed": [
-        "comedy", "adventure", "animation", "fantasy", "family", "action",
-        "thriller", "crime", "science_fiction", "western", "drama", "romance",
+        "fantasy", "family", "action",
+        "thriller", "crime", "western", "drama", "romance",
         "classic", "musical", "mystery", "war"
     ],
     "nostalgic": [
         "comedy", "adventure", "animation", "family", "action", "thriller",
-        "crime", "science_fiction", "western", "tv_movie", "music", "documentary",
-        "drama", "romance"
+        "crime", "science_fiction", "tv_movie", "music", "documentary",
+        "romance"
     ],
     "curious": [
-        "comedy", "adventure", "animation", "family", "drama", "romance",
+        "comedy", "animation", "family", "drama", "romance",
         "history", "war", "classic", "musical", "tv_movie", "music",
-        "documentary", "western", "action"
+        "documentary", "western",
     ],
     "chill": [
         "action", "thriller", "crime", "science_fiction", "western", "drama",
         "romance", "history", "war", "classic", "musical", "mystery",
-        "fantasy", "adventure", "comedy"
+        "fantasy",
     ]
 }
 
@@ -55,6 +54,29 @@ def get_genres_for_mood(mood):
     :return: List of genres.
     """
     return mood_to_genre_mapping.get(mood.lower(), [])
+
+
+def filter_movies_by_mood(movies, mood):
+    """
+    Filters the list of movies based on the genres to exclude for a given mood.
+
+    :param movies: List of movies with genre IDs and other details.
+    :param mood: The user's mood to filter movies by.
+    :return: Filtered list of movies.
+    """
+    # Map genre names to genre IDs
+    genre_map = get_genre_mapping()  # Assume this returns {genre_name: genre_id}
+
+    # Get excluded genre IDs for the mood
+    excluded_genres = set(genre_map.get(genre.lower()) for genre in mood_isnot_genre_mapping.get(mood, []))
+
+    # Filter out movies with any excluded genres
+    filtered_movies = [
+        movie for movie in movies
+        if not excluded_genres.intersection(set(movie['genre_ids']))
+    ]
+
+    return filtered_movies
 
 def get_genre_mapping():
     """
