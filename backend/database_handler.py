@@ -1,8 +1,6 @@
-from urllib.parse import uses_query
 
 import mysql.connector
-from mysql.connector import Error, connect
-from starlette.templating import pass_context
+from mysql.connector import Error
 
 from config import db_config
 
@@ -30,7 +28,6 @@ class DatabaseHandler:
 
     def test_connection(self):
         if self.connection and self.connection.is_connected():
-            print("success")
             return True
         else:
             print("Failed connection")
@@ -377,16 +374,6 @@ class DatabaseHandler:
         else:
             print("No DB connection")
             return None
-    def map_movie_mood(self, movie_id, mood_id, genre_id):
-        """
-        Maps a mood to a genre and adds mood to a certain movie
-
-        :param movie_id:
-        :param mood_id:
-        :param genre_id:
-        :return:
-        """
-        pass
 
     # Manage user data
     def add_watched_movie(self, user_id, movie_id):
