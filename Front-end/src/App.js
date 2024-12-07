@@ -2,6 +2,8 @@ import { useState } from "react";
 import "./App.css";
 import SearchIcon from "./search.svg";
 import MovieCard from "./MovieCard";
+import MoodSelector from "./MoodSelector";
+import Recommendations from "./Recommendations";
 import Login from "./Login";
 import Register from "./Register";
 import Navbar from "./Navbar";
@@ -19,7 +21,13 @@ const HomePage = ({ searchMovies, searchTerm, setSearchTerm, movies }) => {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate("/questions");
+    navigate("/questions"); // Przekierowanie na stronę z pytaniami
+  };
+  
+
+  const handleMoodSelect = (selectedMood) => {
+    localStorage.setItem("userMood", selectedMood); // Zapisanie nastroju w localStorage
+    navigate("/recommendations"); // Przekierowanie na stronę z rekomendacjami
   };
 
   return (
@@ -42,11 +50,8 @@ const HomePage = ({ searchMovies, searchTerm, setSearchTerm, movies }) => {
           onClick={() => searchMovies(searchTerm)}
         />
       </div>
-      <div className="map_mood">
-        <button className="button-cinemood" onClick={handleNavigate}>
-          CINEMOOD
-        </button>
-      </div>
+
+      <MoodSelector onMoodSelect={handleMoodSelect} />
 
       {movies.length > 0 ? (
         <div className="container">
@@ -63,22 +68,6 @@ const HomePage = ({ searchMovies, searchTerm, setSearchTerm, movies }) => {
   );
 };
 
-const QuestionsPage = () => {
-  const navigate = useNavigate();
-
-  return (
-    <div>
-      <h2>Page with questions</h2>
-      <p>Example line.</p>
-      <div className="map_mood">
-        <button className="button-return" onClick={() => navigate("/")}>
-          Return to main page
-        </button>
-      </div>
-    </div>
-  );
-};
-
 const App = () => {
   const [movies, setMovies] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -87,7 +76,7 @@ const App = () => {
     const response = await fetch(`${API_URL}&s=${title}`);
     const data = await response.json();
 
-    setMovies(data.Search);
+    setMovies(data.Search || []);
   };
 
   return (
@@ -106,7 +95,10 @@ const App = () => {
               />
             }
           />
-          <Route path="/questions" element={<QuestionsPage />} />
+          <Route
+            path="/recommendations"
+            element={<Recommendations mood={localStorage.getItem("userMood")} />}
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="*" element={<Navigate to="/" replace />} />

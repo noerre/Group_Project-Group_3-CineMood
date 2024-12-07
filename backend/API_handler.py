@@ -20,7 +20,7 @@ class TMDbAPIHandler:
 
     def __init__(self):
         # Initialize API key
-        self.api_key=api_config['api_key']
+        self.api_key = api_config['api_key']
         if not self.api_key:
             raise ValueError("API key not found.")
 
@@ -52,9 +52,8 @@ class TMDbAPIHandler:
 
         print("TMDb API connection established successfully.")
 
-
     def get_movie_details(self, movie_id):
-      # Fetch detailed information about a movie, including director and country ID
+        # Fetch detailed information about a movie, including director and country ID
 
         # Fetch movie details
         movie_url = f"{self.BASE_URL}/movie/{movie_id}"
@@ -89,7 +88,7 @@ class TMDbAPIHandler:
         }
 
     def get_movies_by_genre(self, genre_name, page=1):
-       # Fetch a list of movies for a given genre name and store them in the database.
+        # Fetch a list of movies for a given genre name and store them in the database.
 
         genre_id = self.GENRE_IDS.get(genre_name)
         if not genre_id:
@@ -156,7 +155,8 @@ def fetch_movies_by_genre(genre_name, mood, limit=10):
             "title": m['title'],
             "release_year": m['release_date'].split('-')[0],
             "overview": m['overview'],
-            "genre_ids": m['genre_ids']
+            "genre_ids": m['genre_ids'],
+            "poster_path": m['poster_path']
         }
         for m in results
     ]
@@ -167,13 +167,20 @@ def fetch_movies_by_genre(genre_name, mood, limit=10):
     # Limit results
     return filtered_movies[:limit]
 
+
 def fetch_movie_info(title, db_handler):
+
     """
     Fetch movie information. First checks the local database; if not found, fetches from TMDb.
 
+<<<<<<< HEAD
     :param title: Movie title to search for.
     :param db_handler: Instance of the DatabaseHandler class.
     :return: Dictionary with movie details or None if not found.
+=======
+
+def fetch_by_movie_name():
+
     """
     if not title:
         raise ValueError("Movie title is required")
@@ -201,6 +208,7 @@ def fetch_movie_info(title, db_handler):
     return movies
 
 
+
 # main function
 if __name__ == "__main__":
     tmdb_handler = TMDbAPIHandler()
@@ -212,6 +220,3 @@ if __name__ == "__main__":
     # for genre in genres:
     #     print(f"\nFetching movies for the '{genre}' genre...")
     #     tmdb_handler.get_movies_by_genre(genre)
-
-
-
