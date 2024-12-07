@@ -11,6 +11,7 @@ from schemas import RegisterRequestSchema, LoginRequestSchema, AuthResponseSchem
 from recomendation_engine import recommend_movies
 from mood_to_genres import get_genres_for_mood
 
+
 def create_app(test_config=None):
     """
     Factory function to create and configure the Flask application.
@@ -221,6 +222,7 @@ def create_app(test_config=None):
         except Exception as e:
             # Return an error message if guest login fails
             return jsonify({"error": str(e)}), 400
+
     @app.route('/recommendations', methods=['POST'])
     def get_recommendations():
         data = request.get_json()  # Get JSON payload from the request
@@ -250,7 +252,6 @@ def create_app(test_config=None):
         get user movie history and show it
         :return:
         """
-
 
     return app
 
