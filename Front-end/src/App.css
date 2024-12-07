@@ -437,6 +437,44 @@ h1 {
   color: #000;
 }
 
+
+
+/* Container for the buttons */
+.mood-selector {
+  display: flex;
+  justify-content: center; /* Centers the buttons */
+  gap: 15px; /* Adds space between the buttons */
+  flex-wrap: wrap; /* Allows buttons to wrap to the next line on smaller screens */
+  margin-top: 20px;
+}
+
+/* Button styles */
+.mood-selector .btn {
+  font-size: 16px;
+  padding: 10px 20px;
+  text-transform: capitalize; /* Capitalizes the first letter of each word */
+  border-radius: 25px; /* Rounded corners */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover effect */
+.mood-selector .btn:hover {
+  background-color: #ff8a00; /* Change to any color on hover */
+  color: white;
+  transform: scale(1.05); /* Slightly increase the size on hover */
+}
+
+/* Focused button (for accessibility) */
+.mood-selector .btn:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 138, 0, 0.7); /* Add a glow effect when focused */
+}
+
+
+
+
+
+
 /* Responsive Adjustments */
 @media screen and (max-width: 400px) {
   .app {

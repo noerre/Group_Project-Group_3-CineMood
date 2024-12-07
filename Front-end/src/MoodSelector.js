@@ -6,8 +6,7 @@ const moods = ["Happy", "Sad", "Excited", "Relaxed", "Nostalgic", "Curious", "Ch
 const MoodSelector = ({ onMoodSelect }) => {
   return (
     <div className="mb-4 text-center">
-      <h3>Select Your Mood:</h3>
-      <div className="btn-group" role="group" aria-label="Mood selection">
+      <div className="mood-selector">
         {moods.map((mood) => (
           <button
             key={mood}
@@ -23,6 +22,5 @@ const MoodSelector = ({ onMoodSelect }) => {
     </div>
   );
 };
-
 
 export default MoodSelector;
