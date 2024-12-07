@@ -12,6 +12,8 @@ from config import db_config
 from schemas import RegisterRequestSchema, LoginRequestSchema, AuthResponseSchema
 from recomendation_engine import recommend_movies
 from mood_to_genres import get_genres_for_mood
+from database_handler import DatabaseHandler
+from API_handler import fetch_movie_info
 
 
 def create_app(test_config=None):
@@ -26,6 +28,7 @@ def create_app(test_config=None):
 
     # Initialize the Flask application
     app = Flask(__name__)
+    db_handler = DatabaseHandler()
 
     # Configure Cross-Origin Resource Sharing (CORS)
     # This allows the frontend application running on localhost and port 3000 to interact with the backend
@@ -232,6 +235,9 @@ def create_app(test_config=None):
 
     @app.route('/recommendations', methods=['POST'])
     def get_recommendations():
+        """
+        Recommend movies based on mood.
+        """
         data = request.get_json()  # Get JSON payload from the request
         mood = data.get("mood", "")
 
@@ -244,7 +250,9 @@ def create_app(test_config=None):
             # Fetch genres for the given mood
             genres = get_genres_for_mood(mood)
             print(f"Genres for mood '{mood}': {genres}")  # Debug print
-
+################################################################################################
+################################################################################################
+###connect with proper user_id
             user_id = 1  # Temporary user ID for testing
             recommendations = recommend_movies(user_id, mood)
             print(f"Recommendations: {recommendations}")  # Debug print
@@ -253,12 +261,68 @@ def create_app(test_config=None):
             print(f"Error: {e}")
             return jsonify({"error": str(e)}), 400
 
-    @app.route('/movie_history', methods=['POST'])
-    def get_history():
+    @app.route('/movie_history', methods=['GET'])
+    def get_user_movie_history():
         """
-        get user movie history and show it
-        :return:
+        Retrieve the movie watch history for a user.
         """
+        user_id = request.args.get("user_id", type=int)
+        if not user_id:
+            return jsonify({"error": "User ID is required"}), 400
+
+        try:
+            history = db_handler.get_watched_movies(user_id)
+            if not history:
+                return jsonify({"message": "No watched movies found."}), 404
+
+            return jsonify(history), 200
+        except Exception as e:
+            print(f"Error: {e}")
+            return jsonify({"error": str(e)}), 400
+
+    @app.route('/add_to_movie_history', methods=['POST'])
+    def add_to_user_movie_history():
+        """
+        Add a movie to the user's watch history.
+        """
+        data = request.get_json()
+        user_id = data.get("user_id")
+        movie_id = data.get("movie_id")
+
+        if not user_id or not movie_id:
+            return jsonify({"error": "User ID and Movie ID are required"}), 400
+
+        try:
+            success = db_handler.add_watched_movie(user_id, movie_id)
+            if success:
+                return jsonify({"message": "Movie added to watch history"}), 200
+            else:
+                return jsonify({"message": "Failed to add movie to history"}), 400
+        except Exception as e:
+            print(f"Error: {e}")
+            return jsonify({"error": str(e)}), 400
+
+    @app.route('/search', methods=['GET'])
+    def get_movie_info():
+        """
+        Search for movie information by title.
+        If not found in the local database, fetch from TMDb.
+        """
+        title = request.args.get("title")
+        if not title:
+            return jsonify({"error": "Movie title is required"}), 400
+
+        try:
+            movie = fetch_movie_info(title, db_handler)
+            if not movie:
+                return jsonify({"message": "Movie not found"}), 404
+
+            return jsonify(movie), 200
+        except Exception as e:
+            print(f"Error: {e}")
+            return jsonify({"error": str(e)}), 400
+
+
 
     return app
 
