@@ -79,11 +79,13 @@ def create_app(test_config=None):
         :return: JSON response with user information and access token or error message.
         """
         data = request.get_json()
+        app.logger.debug(f"Otrzymane dane: {data}")
         schema = RegisterRequestSchema()
 
         # Validate the incoming request data
         errors = schema.validate(data)
         if errors:
+            app.logger.debug(f"Validation errors: {errors}")
             return jsonify({"errors": errors}), 400
 
         username = data.get('username')
@@ -109,6 +111,7 @@ def create_app(test_config=None):
 
             return jsonify(result), 201
         except Exception as e:
+            app.logger.error(f"Błąd podczas rejestracji: {e}")
             # Return an error message if registration fails
             return jsonify({"error": str(e)}), 400
 
