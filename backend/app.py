@@ -5,11 +5,14 @@ from flask_jwt_extended import (
 import os
 
 from dotenv import load_dotenv
+from marshmallow import ValidationError
+
 from auth import AuthHandler
 from config import db_config
 from schemas import RegisterRequestSchema, LoginRequestSchema, AuthResponseSchema
 from recomendation_engine import recommend_movies
 from mood_to_genres import get_genres_for_mood
+
 
 def create_app(test_config=None):
     """
@@ -78,15 +81,19 @@ def create_app(test_config=None):
         :return: JSON response with user information and access token or error message.
         """
         data = request.get_json()
-        schema = RegisterRequestSchema()
+        app.logger.debug(f"Received data: {data}")
 
-        # Validate the incoming request data
-        errors = schema.validate(data)
-        if errors:
-            return jsonify({"errors": errors}), 400
+        schema = RegisterRequestSchema()
+        try:
+            validated_data = schema.load(data)
+        except ValidationError as err:
+            app.logger.debug(f"Validation errors: {err.messages}")
+            return jsonify({"errors": err.messages}), 400
 
         username = data.get('username')
         password = data.get('password')
+
+        app.logger.debug(f"Registering user: {username}")
 
         try:
             # Register the user using AuthHandler
@@ -105,9 +112,10 @@ def create_app(test_config=None):
             # Validate the response schema
             response_schema = AuthResponseSchema()
             result = response_schema.dump(response)
-
+            app.logger.debug(f"Response: {result}")
             return jsonify(result), 201
         except Exception as e:
+            app.logger.error(f"Error during registration: {e}")
             # Return an error message if registration fails
             return jsonify({"error": str(e)}), 400
 
@@ -221,6 +229,7 @@ def create_app(test_config=None):
         except Exception as e:
             # Return an error message if guest login fails
             return jsonify({"error": str(e)}), 400
+
     @app.route('/recommendations', methods=['POST'])
     def get_recommendations():
         data = request.get_json()  # Get JSON payload from the request
@@ -250,7 +259,6 @@ def create_app(test_config=None):
         get user movie history and show it
         :return:
         """
-
 
     return app
 
