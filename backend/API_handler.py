@@ -2,7 +2,7 @@ import requests
 from database_handler import DatabaseHandler
 from config import api_config, db_config
 
-from tmdbv3api import TMDb, Discover
+from tmdbv3api import TMDb, Discover, Movie
 from config import tmdb_api_key
 from mood_to_genres import get_genre_mapping, filter_movies_by_mood
 
@@ -128,7 +128,7 @@ class TMDbAPIHandler:
 tmdb = TMDb()
 tmdb.api_key = tmdb_api_key
 tmdb.language = 'en'
-
+movie_api = Movie()
 
 def fetch_movies_by_genre(genre_name, mood, limit=10):
     """
@@ -167,19 +167,39 @@ def fetch_movies_by_genre(genre_name, mood, limit=10):
     # Limit results
     return filtered_movies[:limit]
 
-def fetch_more_info_about_movie():
+def fetch_movie_info(title, db_handler):
     """
-    Get info about movies to populate database
-    :return:
-    """
-    print("placeholder")
+    Fetch movie information. First checks the local database; if not found, fetches from TMDb.
 
-def fetch_by_movie_name():
+    :param title: Movie title to search for.
+    :param db_handler: Instance of the DatabaseHandler class.
+    :return: Dictionary with movie details or None if not found.
     """
-    Get info about movies to return to search engine
-    :return:
-    """
-    print("placeholder")
+    if not title:
+        raise ValueError("Movie title is required")
+
+
+    movie = db_handler.get_movie_by_title(title)
+    if movie:
+        return movie
+
+
+    tmdb_results = movie_api.search(title)
+    if not tmdb_results:
+        return None
+
+    movies = []
+    for tmdb_movie in tmdb_results:
+        movies.append({
+            "title": tmdb_movie.title,
+            "release_year": tmdb_movie.release_date.split('-')[0] if tmdb_movie.release_date else "Unknown",
+            "overview": tmdb_movie.overview,
+            "genres": [genre['name'] for genre in tmdb_movie.genres] if hasattr(tmdb_movie, 'genres') else [],
+            "popularity": tmdb_movie.popularity
+        })
+
+    return movies
+
 
 # main function
 if __name__ == "__main__":

@@ -5,8 +5,9 @@ from mysql.connector import Error
 from config import db_config
 
 class DatabaseHandler:
-    def __init__(self, db_config):
-        self.db_config = db_config
+#    def __init__(self, db_config):
+    def __init__(self):
+        #self.db_config = db_config
         try:
             self.connection = mysql.connector.connect(
                 host=db_config["host"],
@@ -624,4 +625,5 @@ class DatabaseHandler:
             print("No DB connection")
             return None
 
+    #def add_user(self, user_id):
 
