@@ -624,4 +624,38 @@ class DatabaseHandler:
             print("No DB connection")
             return None
 
+    def check_watched(self, user_id, movie_id):
+        """
+        Check if user has already watched a movie.
+
+        :param user_id: user id
+        :param movie_id: movie id
+        :return: True if user has watched the movie. False otherwise
+        """
+        # Check if user exists
+        if not self.check_record("users", "id", user_id):
+            print(f"User {user_id} does not exist")
+            return False
+
+        if self.connection and self.connection.is_connected():
+            cursor = self.connection.cursor()
+            print(f"Checking watched status for user_id: {user_id} and movie_id: {movie_id}")
+
+            try:
+                query = """
+                           SELECT *
+                           FROM watched 
+                           WHERE user_id = %s AND movie_id = %s
+                       """
+                cursor.execute(query, (user_id, movie_id))
+                return cursor.fetchone() is not None
+
+            except Error as e:
+                print(f"Error retrieving recommendations: {e}")
+                return None
+            finally:
+                cursor.close()
+        else:
+            print("No DB connection")
+            return None
 
