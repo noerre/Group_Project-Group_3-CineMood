@@ -1,5 +1,5 @@
 # DROP DATABASE cine_mood;
-# CREATE DATABASE cine_mood;
+# CREATE DATABASE IF NOT EXISTS cine_mood;
 
 
 USE cine_mood;
@@ -389,3 +389,6 @@ INSERT INTO mood (mood) VALUES ('Angry');
 INSERT INTO mood (mood) VALUES ('Nostalgic');
 INSERT INTO mood (mood) VALUES ('Adventurous');
 
+ALTER TABLE users
+ADD COLUMN failed_attempts INT NOT NULL DEFAULT 0,
+ADD COLUMN lockout_time DATETIME NULL;

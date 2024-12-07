@@ -1,8 +1,9 @@
 from database_handler import DatabaseHandler
 from config import db_config
 
+
 def test_database_handler():
-    db_handler = DatabaseHandler(db_config)
+    db_handler = DatabaseHandler()
 
     if db_handler.test_connection():
         print("Successful connnection")
@@ -43,7 +44,6 @@ def test_database_handler():
         db_handler.close_connection()
     else:
         print("Connection error")
-
 
 
 if __name__ == "__main__":

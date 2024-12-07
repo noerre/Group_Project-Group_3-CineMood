@@ -93,7 +93,8 @@ class AuthHandler:
 
         try:
             # Insert the new user into the database
-            insert_query = "INSERT INTO users (username, password) VALUES (%s, %s)"
+            insert_query = ("INSERT INTO users (username, password, , failed_attempts, lockout_time) "
+                            "VALUES (%s, %s, 0, NULL)")
             self.cursor.execute(insert_query, (username, hashed_password))
             self.conn.commit()
         except mysql.connector.IntegrityError:
