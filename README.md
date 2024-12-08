@@ -102,9 +102,12 @@ CFG-Group_Project-Group_3-CineMood/
 │       ├── Recommendations.js     # Displays movie recommendations
 │       ├── Register.js            # User registration component
 │       ├── search.svg             # Search icon used in the application
+│       ├── .env                   # Environment variables
+
 │
 ├── sql/
 │   ├── cinemood_database_creation.sql  # SQL script to create the CineMood database schema
+│   ├── Cine_mood_mock_data.sql         # SQL script to create a mock data for the CineMood database 
 │   ├── init_database.py                # Python script to initialize the database
 │   ├── test_queries_cinemood.sql       # SQL queries for testing database setup
 │
@@ -118,7 +121,6 @@ CFG-Group_Project-Group_3-CineMood/
 ├── .gitignore                          # Specifies intentionally untracked files
 ├── install.sh                          # Bash script for setting up the project
 ├── requirements.txt                    # Python dependencies
-├── run_app.sh                          # Bash script to run the application
 └── README.md                           # Project documentation (this file)
 ```
 
