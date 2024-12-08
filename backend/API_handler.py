@@ -129,6 +129,7 @@ tmdb.api_key = tmdb_api_key
 tmdb.language = 'en'
 movie_api = Movie()
 
+
 def fetch_movies_by_genre(genre_name, mood, limit=1000):
     """
     Fetches movies based on genre name from TMDb.
@@ -170,7 +171,6 @@ def fetch_movies_by_genre(genre_name, mood, limit=1000):
 
 
 def fetch_movie_info(title, db_handler):
-
     """
     Fetch movie information. First checks the local database; if not found, fetches from TMDb.
 
@@ -181,11 +181,9 @@ def fetch_movie_info(title, db_handler):
     if not title:
         raise ValueError("Movie title is required")
 
-
     movie = db_handler.get_movie_by_title(title)
     if movie:
         return movie
-
 
     tmdb_results = movie_api.search(title)
     if not tmdb_results:
@@ -203,7 +201,6 @@ def fetch_movie_info(title, db_handler):
         })
 
     return movies
-
 
 
 # main function
