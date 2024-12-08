@@ -21,7 +21,11 @@ const Login = () => {
       const response = await api.post("/login", { username, password });
       const { access_token } = response.data;
 
+      localStorage.setItem("accessToken", access_token);
+      localStorage.setItem("username", username);
+
       login(access_token);
+      
       navigate("/");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {

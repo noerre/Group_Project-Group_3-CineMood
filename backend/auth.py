@@ -93,13 +93,14 @@ class AuthHandler:
 
         try:
             # Insert the new user into the database
-            insert_query = ("INSERT INTO users (username, password, , failed_attempts, lockout_time) "
-                            "VALUES (%s, %s, 0, NULL)")
+            insert_query = "INSERT INTO users (username, password) VALUES (%s, %s)"
             self.cursor.execute(insert_query, (username, hashed_password))
             self.conn.commit()
         except mysql.connector.IntegrityError:
             # Handle case where username is already taken (violates UNIQUE constraint)
             raise Exception("Username is already taken. Please choose another one.")
+        except mysql.connector.Error as err:
+            raise Exception(f"MySQL Error: {err}")
 
     def login_guest(self):
         """
