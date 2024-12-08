@@ -249,6 +249,7 @@ All frontend files are located in the `Front-end` folder. Use `npm` to install d
 ## Team Contribution
 
 Each team member contributed to the development of the backend, frontend, and database design.
+
 - **Justyna Gadjek:** Aunthentication design and implementation, Front-end implementation, system testing and installation, documentation.
 - **Hermella Kebede:** Database handler and API handler implementation, documentation.
 - **Magdalena Kurek:** Front-end design and implementation, system testing and installation.
@@ -256,5 +257,6 @@ Each team member contributed to the development of the backend, frontend, and da
 - **Pamela Smardz:** Recommendations algorithm implementation, API implementation, System testing and installation, documentation.
 - **Noelia Ruiz Barrales:** Database design and implementation, Database handler implementation, documentation. 
 
+You can check a more detailed task list in [our Activity log](https://docs.google.com/spreadsheets/d/1DOLx7TO7IC1AGiFcujOuicCbr9boKwiO/edit?usp=sharing&ouid=106111739777230038037&rtpof=true&sd=true).
 
 
