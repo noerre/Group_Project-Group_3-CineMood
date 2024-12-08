@@ -360,15 +360,22 @@ const RecommendationsPage = () => {
   return (
     <div>
       <h2>Recommendations for mood: {mood}</h2>
-      <div className="container">
-        {recommendations.length > 0 ? (
-          recommendations.map((movie, index) => (
-            <MovieCard key={index} movie={movie} />
-          ))
-        ) : (
-          <h3>No recommendations found</h3>
-        )}
+      <div className="row justify-content-center">
+  {recommendations.length > 0 ? (
+    recommendations.map((movie, index) => (
+      <div
+        className="col-6 col-sm-4 col-md-3 col-lg-2 mb-4"
+        key={index}
+      >
+        <MovieCard movie={movie} />
       </div>
+    ))
+  ) : (
+    <div className="col-12 text-center text-light">
+      <h3>No recommendations found</h3>
+    </div>
+  )}
+</div>
     </div>
   );
 };
@@ -416,4 +423,3 @@ const App = () => {
 };
 
 export default App;
-
