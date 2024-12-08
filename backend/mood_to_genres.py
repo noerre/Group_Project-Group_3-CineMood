@@ -39,9 +39,8 @@ mood_isnot_genre_mapping = {
         "documentary", "western",
     ],
     "chill": [
-        "action", "thriller", "crime", "science_fiction", "western", "drama",
-        "romance", "history", "war", "classic", "musical", "mystery",
-        "fantasy",
+        "thriller", "science_fiction", "western", "drama",
+        "romance", "history", "war",
     ]
 }
 
