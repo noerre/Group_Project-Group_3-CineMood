@@ -156,6 +156,12 @@ Note:
 
 ### Frontend Environment:
 
+Create a `Front-end/.env` file in the Front-end directory with the following content:
+
+```
+REACT_APP_TMDB_API_KEY==your_tmdb_api_key
+```
+
 All frontend files are located in the `Front-end` folder. Use `npm` to install dependencies.
 
 ---

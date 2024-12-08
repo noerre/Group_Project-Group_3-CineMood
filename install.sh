@@ -112,6 +112,18 @@ EOL
     echo ".env file created. Please, remember to fill the correctr environment variables."
 fi
 
+if [ -f Front-end/.env ]; then
+    echo "Front-end/.env file already exists. Skipping file creation."
+else
+    echo "Creating Front-end/.env file in the root directory..."
+
+    cat > Front-end/.env <<EOL
+REACT_APP_TMDB_API_KEY=your_tmdb_api_key
+EOL
+
+    echo "Front-end/.env file created. Please, remember to fill the correctr environment variables."
+fi
+
 # Set up Backend
 if [ -d "backend" ]; then
     if prompt_user "Do you want to set up the backend?"; then
