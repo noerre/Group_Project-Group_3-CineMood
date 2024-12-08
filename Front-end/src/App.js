@@ -7,6 +7,8 @@ import Login from "./Login";
 import Register from "./Register";
 import Navbar from "./Navbar";
 import MoodSelector from "./MoodSelector";
+import MovieDetailsPage from "./MovieDetailsPage";
+
 import { useLocation } from "react-router-dom";
 import {
   BrowserRouter as Router,
@@ -69,6 +71,7 @@ const SearchPage = () => {
   const [movies, setMovies] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const location = useLocation(); // Accessing URL query parameters
+  const navigate = useNavigate();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -96,40 +99,48 @@ const SearchPage = () => {
       }
     };
 
-  return (
-    <>
-      <h1>Search Movies</h1>
-      <div className="search">
-        <input
-          placeholder="Search for movies"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              searchMovies(searchTerm);
-            }
-          }}
-        />
-        <img
-          src={SearchIcon}
-          alt="search"
-          onClick={() => searchMovies(searchTerm)}
-        />
-      </div>
-      {movies.length > 0 ? (
-        <div className="container">
-          {movies.map((movie) => (
-            <MovieCard key={movie.imdbID} movie={movie} />
-          ))}
-        </div>
-      ) : (
-        <div className="empty">
-          <h2>No movies found</h2>
-        </div>
-      )}
-    </>
-  );
-};
+    const handleMoreDetails = (movieId) => {
+        navigate(`/movie-details/${movieId}`);
+      };
+
+      return (
+        <>
+          <h1>Search Movies</h1>
+          <div className="search">
+            <input
+              placeholder="Search for movies"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  searchMovies(searchTerm);
+                }
+              }}
+            />
+            <img
+              src={SearchIcon}
+              alt="search"
+              onClick={() => searchMovies(searchTerm)}
+            />
+          </div>
+          {movies.length > 0 ? (
+            <div className="container">
+              {movies.map((movie) => (
+                <MovieCard
+                  key={movie.id} // Użyj unikalnego identyfikatora TMDB
+                  movie={movie}
+                  onMoreDetails={handleMoreDetails} // Przekazanie callbacka
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="empty">
+              <h2>No movies found</h2>
+            </div>
+          )}
+        </>
+      );
+    };
 
 
 
@@ -158,6 +169,7 @@ const QuestionsPage = () => {
 const RecommendationsPage = () => {
   const [recommendations, setRecommendations] = useState([]);
   const mood = localStorage.getItem("userMood");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -186,25 +198,36 @@ const RecommendationsPage = () => {
     }
   }, [mood]);
 
+  const handleMoreDetails = (movie) => {
+    if (!movie || !movie.id) {
+        console.error("No movie ID provided.", movie);
+        return;
+      }
+      navigate(`/movie-details?id=${movie.id}`);
+    };
+
   return (
     <div>
       <h2>Recommendations for mood: {mood}</h2>
       <div className="row justify-content-center">
-  {recommendations.length > 0 ? (
-    recommendations.map((movie, index) => (
-      <div
-        className="col-6 col-sm-4 col-md-3 col-lg-2 mb-4"
-        key={index}
-      >
-        <MovieCard movie={movie} />
+        {recommendations.length > 0 ? (
+          recommendations.map((movie) => (
+            <div
+              className="col-6 col-sm-4 col-md-3 col-lg-2 mb-4"
+              key={movie.id} 
+            >
+              <MovieCard
+                movie={movie}
+                onMoreDetails={handleMoreDetails} 
+              />
+            </div>
+          ))
+        ) : (
+          <div className="col-12 text-center text-light">
+            <h3>No recommendations found</h3>
+          </div>
+        )}
       </div>
-    ))
-  ) : (
-    <div className="col-12 text-center text-light">
-      <h3>No recommendations found</h3>
-    </div>
-  )}
-</div>
     </div>
   );
 };
@@ -241,9 +264,12 @@ const App = () => {
             path="/recommendations"
             element={<RecommendationsPage />}
           />
+          <Route path="/questions" element={<QuestionsPage />} />
+          <Route path="/recommendations" element={<RecommendationsPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/search" element={<SearchPage />} /> 
+          <Route path="/movie-details/:id" element={<MovieDetailsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

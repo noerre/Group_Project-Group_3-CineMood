@@ -250,9 +250,7 @@ def create_app(test_config=None):
             # Fetch genres for the given mood
             genres = get_genres_for_mood(mood)
             print(f"Genres for mood '{mood}': {genres}")  # Debug print
-################################################################################################
-################################################################################################
-###connect with proper user_id
+
             user_id = 1  # Temporary user ID for testing
             recommendations = recommend_movies(user_id, mood)
             print(f"Recommendations: {recommendations}")  # Debug print
