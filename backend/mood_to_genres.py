@@ -12,7 +12,7 @@ mood_isnot_genre_mapping = {
     "happy": [
         "drama", "history", "war", "crime",
         "classic", "mystery", "thriller", "documentary",
-        "western", "action",
+        "western",
     ],
     "sad": [
         "animation", "fantasy", "family",
