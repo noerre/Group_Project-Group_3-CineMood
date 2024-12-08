@@ -152,6 +152,7 @@ def fetch_movies_by_genre(genre_name, mood, limit=1000):
 
     movies = [
         {
+            "id": m['id'],
             "title": m['title'],
             "release_year": m['release_date'].split('-')[0],
             "overview": m['overview'],
@@ -172,6 +173,7 @@ def fetch_movie_info(title, db_handler):
 
     """
     Fetch movie information. First checks the local database; if not found, fetches from TMDb.
+
     :param title: Movie title to search for.
     :param db_handler: Instance of the DatabaseHandler class.
     :return: Dictionary with movie details or None if not found.
@@ -192,6 +194,7 @@ def fetch_movie_info(title, db_handler):
     movies = []
     for tmdb_movie in tmdb_results:
         movies.append({
+            "id": tmdb_movie.id,
             "title": tmdb_movie.title,
             "release_year": tmdb_movie.release_date.split('-')[0] if tmdb_movie.release_date else "Unknown",
             "overview": tmdb_movie.overview,

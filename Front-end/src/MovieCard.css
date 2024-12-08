@@ -57,7 +57,7 @@
   .movie div:nth-of-type(3) h3 {
     margin-top: 5px;
     font-family: "Roboto Slab", serif;
-    color: #f9d3b4;
+    color: #c1bcb9;
   }
   
   .movie:hover div:nth-of-type(2) {
@@ -72,6 +72,21 @@
   .movie:hover div:nth-of-type(1) {
     opacity: 1;
   }
+  .card-title {
+    font-size: 1.2rem; 
+    font-weight: bold; 
+    color: #ffffff; 
+}
+
+.card-text {
+    font-size: 1rem; 
+    color: rgba(255, 255, 255, 0.9); 
+}
+
+.card {
+    background-color: rgba(243, 241, 241, 0.8); 
+    border-radius: 10px; 
+}
   
   @media screen and (max-width: 600px) {
     .movie {
