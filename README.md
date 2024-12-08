@@ -62,6 +62,19 @@ To set up the project, clone this repository and run the installation scripts.
    npm start
    ```
    The frontend will run on `http://localhost:3000`.
+---
+### Demo images
+Clic on the CineMood button.
+![screen1](https://github.com/user-attachments/assets/d4d48508-4899-4297-9fbd-f815b32de792)
+
+Pick your mood. 
+![screen2](https://github.com/user-attachments/assets/c81581d2-35fc-4869-beb5-07e8a3992612)
+
+And you will have some great recommendations from the CineMood app!
+![screen3](https://github.com/user-attachments/assets/0e249146-ee66-4ef5-91e7-12638c55c019)
+
+You can also get more details from the movies:
+![image (14)](https://github.com/user-attachments/assets/12e5e755-528e-4556-9704-611d29626426)
 
 ---
 
