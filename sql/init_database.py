@@ -65,3 +65,4 @@ def execute_sql_file(file_path):
 # Call the functions
 init_db()
 execute_sql_file('cinemood_database_creation.sql')
+execute_sql_file('Cine_mood_mock_data.sql')

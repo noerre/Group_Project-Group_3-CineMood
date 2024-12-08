@@ -177,9 +177,6 @@ def fetch_movie_info(title, db_handler):
     :param title: Movie title to search for.
     :param db_handler: Instance of the DatabaseHandler class.
     :return: Dictionary with movie details or None if not found.
-
-def fetch_by_movie_name():
-
     """
     if not title:
         raise ValueError("Movie title is required")

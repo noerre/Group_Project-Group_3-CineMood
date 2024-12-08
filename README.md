@@ -79,9 +79,10 @@ CFG-Group_Project-Group_3-CineMood/
 │   ├── schemas.py                 # Marshmallow schemas for serializing and deserializing data
 │   ├── test_database_handler_actual_db.py # Tests for database operations using the actual database
 │   ├── test_db_handler.py         # Unit tests for database handler functions
+│   ├── test_recomendation.py      # Test for recomendation algorythm work
 │
 ├── documentation/
-│   ├── placeholder.md             # Documentation placeholder
+│   ├── 
 │
 ├── Front-end/
 │   ├── node_modules/              # Node.js dependencies
@@ -101,9 +102,12 @@ CFG-Group_Project-Group_3-CineMood/
 │       ├── Recommendations.js     # Displays movie recommendations
 │       ├── Register.js            # User registration component
 │       ├── search.svg             # Search icon used in the application
+│       ├── .env                   # Environment variables
+
 │
 ├── sql/
 │   ├── cinemood_database_creation.sql  # SQL script to create the CineMood database schema
+│   ├── Cine_mood_mock_data.sql         # SQL script to create a mock data for the CineMood database 
 │   ├── init_database.py                # Python script to initialize the database
 │   ├── test_queries_cinemood.sql       # SQL queries for testing database setup
 │
@@ -117,7 +121,6 @@ CFG-Group_Project-Group_3-CineMood/
 ├── .gitignore                          # Specifies intentionally untracked files
 ├── install.sh                          # Bash script for setting up the project
 ├── requirements.txt                    # Python dependencies
-├── run_app.sh                          # Bash script to run the application
 └── README.md                           # Project documentation (this file)
 ```
 
@@ -147,11 +150,19 @@ API_KEY=your_tmdb_API_Read_Access_Token
 ```
 
 Replace placeholders with your actual credentials.
+You can get the API keys at: https://developer.themoviedb.org/docs/getting-started
+
 Note:
 
 - **Security**: Ensure that the .env file is added to .gitignore to protect sensitive information.
 
 ### Frontend Environment:
+
+Create a `Front-end/.env` file in the Front-end directory with the following content:
+
+```
+REACT_APP_TMDB_API_KEY==your_tmdb_api_key
+```
 
 All frontend files are located in the `Front-end` folder. Use `npm` to install dependencies.
 
@@ -201,49 +212,3 @@ Each team member contributed to the development of the backend, frontend, and da
 
 
 
-# Old red.me (for now, I will delete it soon)
-
-To ensure everything is installed you can use install.sh.
-
-Type into git bash terminal command:
-
-````commandline
-./install.sh
-````
-And answer questions prompted on terminal.
-If it stopes working because you need to instal something from external source, restart install.sh again.
-
-We are using dotenv, all login credentials will be in .env file that is .gitignore 
-
-how should .env look like in : (main folder)
-
-````
-DB_HOST=localhost
-PORT=3306
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=cine_mood
-TMDB_API_KEY=48bb9ee8045809c1d8bc398b65b910a2
-API_KEY=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYzkxMWYxYzZhYTBkYmQxZGMwMGE5MmE4NTg5ZDNmMyIsIm5iZiI6MTczMzE2NjA3Mi40OTEwMDAyLCJzdWIiOiI2NzRlMDNmOGQ4YWM0NTY3M2QxM2Y3N2MiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.LpLe6g8Dajwsk15oqX5pia5OxyfE2EDYo-fOZy72dXQ
-
-````
-those are Pamela's api key, change your password
-
-
-To run app: Open 2 git bash windows (with open one git bash window click Alt + F2)
-in first window: 
-````
-python backend/app.py
-```` 
-
-enter Front-end in the other window:
-````
-cd Front-end
-npm start
-````
-
-Acces CineMood in browser with:
-
-````
-http://localhost:3000
-````

@@ -1,42 +1,42 @@
-# DROP DATABASE cine_mood;
-# CREATE DATABASE IF NOT EXISTS cine_mood;
-
-
+#DROP DATABASE cine_mood;
+CREATE DATABASE IF NOT EXISTS cine_mood;
 USE cine_mood;
 
 # Table creation 
 # Users 
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
 	id INT AUTO_INCREMENT PRIMARY KEY, 
     username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    failed_attempts INT DEFAULT 0,
+    lockout_time DATETIME NULL
 );
 
 # Movies related tables 
-CREATE TABLE director (
+CREATE TABLE IF NOT EXISTS director (
 	id INT PRIMARY KEY, 
     d_name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE actor (
+CREATE TABLE IF NOT EXISTS actor (
 	id INT PRIMARY KEY, 
     a_name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE country (
+CREATE TABLE IF NOT EXISTS country (
 	id CHAR(2) PRIMARY KEY, # alpha-2-code for the country
     country VARCHAR(100) NOT NULL
 ); 
 
-CREATE TABLE platform (
+CREATE TABLE IF NOT EXISTS platform (
 	id INT AUTO_INCREMENT PRIMARY KEY,
     p_name VARCHAR(20) NOT NULL,
     p_web VARCHAR(100) NOT NULL
 );
 
 
-CREATE TABLE movie (
+CREATE TABLE IF NOT EXISTS movie (
 	id INT PRIMARY KEY, 
     title VARCHAR(255) NOT NULL, 
     release_year YEAR, 
@@ -47,7 +47,7 @@ CREATE TABLE movie (
 	CONSTRAINT fk_movie_country FOREIGN KEY (country_id) REFERENCES country(id)
 );
 
-CREATE TABLE movie_platform (
+CREATE TABLE IF NOT EXISTS movie_platform (
 	platform_id INT NOT NULL, 
     movie_id INT NOT NULL, 
     PRIMARY KEY (platform_id, movie_id), 
@@ -55,7 +55,7 @@ CREATE TABLE movie_platform (
     CONSTRAINT fk_movie_platform_movie FOREIGN KEY (movie_id) REFERENCES movie(id)
 );
 
-CREATE TABLE cast (
+CREATE TABLE IF NOT EXISTS cast (
 	actor_id INT NOT NULL, 
     movie_id INT NOT NULL, 
     PRIMARY KEY (actor_id, movie_id), 
@@ -63,12 +63,12 @@ CREATE TABLE cast (
     CONSTRAINT fk_cast_movie FOREIGN KEY (movie_id) REFERENCES movie(id)
 );
 
-CREATE TABLE genre(
+CREATE TABLE IF NOT EXISTS genre (
 	id INT PRIMARY KEY, 
     genre VARCHAR(20) NOT NULL UNIQUE 
 );
 
-CREATE TABLE movie_genre(
+CREATE TABLE IF NOT EXISTS movie_genre (
 	movie_id INT NOT NULL, 
     genre_id INT NOT NULL, 
     PRIMARY KEY (movie_id, genre_id), 
@@ -76,12 +76,12 @@ CREATE TABLE movie_genre(
     CONSTRAINT fk_movie_genre_genre FOREIGN KEY (genre_id) REFERENCES genre(id)
 );
 
-CREATE TABLE mood(
+CREATE TABLE IF NOT EXISTS mood (
 	id INT AUTO_INCREMENT PRIMARY KEY, 
     mood VARCHAR(20) NOT NULL UNIQUE 
 );
 
-CREATE TABLE movie_mood(
+CREATE TABLE IF NOT EXISTS movie_mood (
 	movie_id INT NOT NULL, 
     mood_id INT NOT NULL, 
     PRIMARY KEY (movie_id, mood_id), 
@@ -91,7 +91,7 @@ CREATE TABLE movie_mood(
 
 # User actions 
 # save the movies watched by the user 
-CREATE TABLE watched (
+CREATE TABLE IF NOT EXISTS watched (
 	user_id INT NOT NULL, 
     movie_id INT NOT NULL, 
     PRIMARY KEY (user_id, movie_id), 
@@ -100,7 +100,7 @@ CREATE TABLE watched (
 );
 
 # save the ratings 
-CREATE TABLE rating (
+CREATE TABLE IF NOT EXISTS rating (
 	id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL, 
     movie_id INT NOT NULL, 
@@ -111,7 +111,7 @@ CREATE TABLE rating (
 );
 
 # recommendations our app made to users 
-CREATE TABLE recommendations (
+CREATE TABLE IF NOT EXISTS recommendations (
     user_id INT NOT NULL,
     movie_id INT NOT NULL,
     recommended_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -389,6 +389,3 @@ INSERT INTO mood (mood) VALUES ('Angry');
 INSERT INTO mood (mood) VALUES ('Nostalgic');
 INSERT INTO mood (mood) VALUES ('Adventurous');
 
-ALTER TABLE users
-ADD COLUMN failed_attempts INT NOT NULL DEFAULT 0,
-ADD COLUMN lockout_time DATETIME NULL;

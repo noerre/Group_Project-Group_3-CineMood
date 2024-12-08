@@ -93,6 +93,42 @@ fi
 #    echo "Skipping repository cloning."
 #fi
 
+# Check if .env file exists
+if [ -f .env ]; then
+    echo ".env file already exists. Skipping file creation."
+else
+    echo "Creating .env file in the root directory..."
+
+    cat > .env <<EOL
+DB_HOST=localhost
+PORT=3306
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_NAME=cine_mood
+TMDB_API_KEY=your_tmdb_api_key
+API_KEY=your_tmdb_API_Read_Access_Token
+EOL
+
+    echo ".env file created. Please, remember to fill the correctr environment variables."
+fi
+
+if [ -d "Front-end"]; then
+    cd Front-end || exit 1
+    if [ -f .env ]; then
+        echo "Front-end/.env file already exists. Skipping file creation."
+    else
+        echo "Creating Front-end/.env file in the Front-end directory..."
+
+        cat > .env <<EOL
+REACT_APP_TMDB_API_KEY=your_tmdb_api_key
+EOL
+
+        echo "Front-end/.env file created. Please, remember to fill the correctr environment variables."
+    fi
+    cd ..
+    else
+      echo "Database directory not found. Skipping backend setup."
+fi
 # Set up Backend
 if [ -d "backend" ]; then
     if prompt_user "Do you want to set up the backend?"; then
@@ -110,6 +146,21 @@ if [ -d "backend" ]; then
     fi
 else
     echo "Backend directory not found. Skipping backend setup."
+fi
+
+# Set up Database
+if [ -d "sql" ]; then
+    if prompt_user "Do you want to set up the database?"; then
+        echo "Setting up the database..."
+        cd sql || exit 1
+        python init_database.py
+        echo "Database setup complete."
+        cd ..
+    else
+        echo "Database frontend setup."
+    fi
+else
+    echo "Database directory not found. Skipping Database setup."
 fi
 
 # Set up Frontend
