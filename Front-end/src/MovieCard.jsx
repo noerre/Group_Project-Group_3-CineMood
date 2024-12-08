@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const MovieCard = ({ movie: { imdbID, Year, Poster, Title, Type } }) => {
   return (
@@ -8,7 +8,10 @@ const MovieCard = ({ movie: { imdbID, Year, Poster, Title, Type } }) => {
       </div>
 
       <div>
-        <img src={Poster !== "N/A" ? Poster : "https://via.placeholder.com/400"} alt={Title} />
+        <img
+          src={Poster !== "N/A" ? Poster : "https://via.placeholder.com/400"}
+          alt={Title}
+        />
       </div>
 
       <div>
@@ -17,6 +20,6 @@ const MovieCard = ({ movie: { imdbID, Year, Poster, Title, Type } }) => {
       </div>
     </div>
   );
-}
+};
 
 export default MovieCard;

@@ -1,9 +1,14 @@
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, ValidationError
 
 
 # ======================================================================
 # Schema Definitions using Marshmallow
 # ======================================================================
+
+def validate_special_char(value):
+    if not any(c in '!@#$%^&*()-_=+[]{}|;:",.<>?/' for c in value):
+        raise ValidationError("Password must include at least one special character.")
+
 
 class RegisterRequestSchema(Schema):
     """
@@ -25,7 +30,10 @@ class RegisterRequestSchema(Schema):
     )
     password = fields.Str(
         required=True,
-        validate=validate.Length(min=8, error="Password must be at least 8 characters long.")
+        validate=[
+            validate.Length(min=8, error="Password must be at least 8 characters long."),
+            validate_special_char
+        ]
     )
 
 
