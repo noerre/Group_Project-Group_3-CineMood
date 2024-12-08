@@ -2,6 +2,7 @@
 
 This project provides a movie recommendation application called **CineMood**, designed to suggest movies based on mood and preferences. It includes a backend service handling API requests and database operations, and a frontend interface for user interaction.
 
+
 ## Table of Contents
 
 1. [Overview](#overview)
@@ -19,8 +20,10 @@ This project provides a movie recommendation application called **CineMood**, de
 ---
 
 ## Overview
+In an era with an ever-increasing amount of available film content, users often struggle to choose the right movie to watch.
+CineMood is an innovative movie recommendation platform tailored to users' moods and preferences. 
 
-CineMood is an innovative movie recommendation platform tailored to users' moods. It leverages external APIs and custom recommendation logic to create personalized experiences for each user. This project exemplifies a combination of robust backend systems with an interactive and responsive frontend.
+It leverages external APIs and custom recommendation logic to create personalized experiences for each user. This project exemplifies a combination of robust backend systems with an interactive and responsive frontend.
 
 ---
 
@@ -123,7 +126,30 @@ CFG-Group_Project-Group_3-CineMood/
 ├── requirements.txt                    # Python dependencies
 └── README.md                           # Project documentation (this file)
 ```
+---
+## Technologies used 
 
+- **Python 3.x** (Back-end)
+- **React.js** (Front-end)
+- **Standard Libraries**:
+    - `itertools`
+    - `collections`
+    - `unittest`
+- **External Libraries**:
+    - `requests` (for API communication)
+    - `Flask` (to build API handling app)
+    - `Flask-Cors` (to habilitate Cross-Origin Resource Sharing in backend routes)
+    - `Flask-JWT-Extended` (to manage the aunthentication through JWT)
+    - `pytest` (for test automation)
+    - `mysql-connector-python` (for MySQL database handling)
+    - `TMDbv3API` (to interact with TBDb)
+- **API**:
+    - The Movie Database (TMDb) API 
+- **Database**:
+    - MySQL: A relational database suitable for medium to large-scale projects, providing robust data handling capabilities.
+- **Version Control**:
+    - Git: For version control and team collaboration.
+---
 ## Features
 
 1. **User Authentication**: Users can register, login, and logout.
@@ -203,12 +229,19 @@ All frontend files are located in the `Front-end` folder. Use `npm` to install d
 2. Allow users to rate and review movies.
 3. Add support for multiple languages.
 4. Improve recommendation engine using machine learning.
+5. Allow users to ask for more recommendations. 
 
 ---
 
 ## Team Contribution
 
 Each team member contributed to the development of the backend, frontend, and database design.
+- **Justyna Gadjek:** Aunthentication design and implementation, Front-end implementation, system testing and installation, documentation.
+- **Hermella Kebede:** Database handler and API handler implementation, documentation.
+- **Magdalena Kurek:** Front-end design and implementation, system testing and installation.
+- **Aleksandra Dragan:** Recommendations algorithm.
+- **Pamela Smardz:** Recommendations algorithm implementation, API implementation, System testing and installation, documentation.
+- **Noelia Ruiz Barrales:** Database design and implementation, Database handler implementation, documentation. 
 
 
 
