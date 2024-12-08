@@ -79,9 +79,10 @@ CFG-Group_Project-Group_3-CineMood/
 │   ├── schemas.py                 # Marshmallow schemas for serializing and deserializing data
 │   ├── test_database_handler_actual_db.py # Tests for database operations using the actual database
 │   ├── test_db_handler.py         # Unit tests for database handler functions
+│   ├── test_recomendation.py      # Test for recomendation algorythm work
 │
 ├── documentation/
-│   ├── placeholder.md             # Documentation placeholder
+│   ├── 
 │
 ├── Front-end/
 │   ├── node_modules/              # Node.js dependencies
@@ -147,6 +148,8 @@ API_KEY=your_tmdb_API_Read_Access_Token
 ```
 
 Replace placeholders with your actual credentials.
+You can get the API keys at: https://developer.themoviedb.org/docs/getting-started
+
 Note:
 
 - **Security**: Ensure that the .env file is added to .gitignore to protect sensitive information.
@@ -201,49 +204,3 @@ Each team member contributed to the development of the backend, frontend, and da
 
 
 
-# Old red.me (for now, I will delete it soon)
-
-To ensure everything is installed you can use install.sh.
-
-Type into git bash terminal command:
-
-````commandline
-./install.sh
-````
-And answer questions prompted on terminal.
-If it stopes working because you need to instal something from external source, restart install.sh again.
-
-We are using dotenv, all login credentials will be in .env file that is .gitignore 
-
-how should .env look like in : (main folder)
-
-````
-DB_HOST=localhost
-PORT=3306
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=cine_mood
-TMDB_API_KEY=48bb9ee8045809c1d8bc398b65b910a2
-API_KEY=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzYzkxMWYxYzZhYTBkYmQxZGMwMGE5MmE4NTg5ZDNmMyIsIm5iZiI6MTczMzE2NjA3Mi40OTEwMDAyLCJzdWIiOiI2NzRlMDNmOGQ4YWM0NTY3M2QxM2Y3N2MiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.LpLe6g8Dajwsk15oqX5pia5OxyfE2EDYo-fOZy72dXQ
-
-````
-those are Pamela's api key, change your password
-
-
-To run app: Open 2 git bash windows (with open one git bash window click Alt + F2)
-in first window: 
-````
-python backend/app.py
-```` 
-
-enter Front-end in the other window:
-````
-cd Front-end
-npm start
-````
-
-Acces CineMood in browser with:
-
-````
-http://localhost:3000
-````
