@@ -67,11 +67,9 @@ const MovieCard = ({ movie, onMoreDetails }) => {
         <p className="card-text">
           {movie.overview ? movie.overview.substring(0, 150) + "..." : "No description available."}
         </p>
-        <p className="card-text">
-          <small className="text-muted">
-            Release Year: {movie.release_date ? movie.release_date.split("-")[0] : "Unknown"}
-          </small>
-        </p>
+        <p className="card-text mt-auto">
+    <small className="text-muted">Release Year: {movie.release_year || "Unknown"}</small>
+</p>
         {onMoreDetails && (
           <button
             className="btn btn-primary"
