@@ -93,6 +93,25 @@ fi
 #    echo "Skipping repository cloning."
 #fi
 
+# Check if .env file exists
+if [ -f .env ]; then
+    echo ".env file already exists. Skipping file creation."
+else
+    echo "Creating .env file in the root directory..."
+
+    cat > .env <<EOL
+DB_HOST=localhost
+PORT=3306
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_NAME=cine_mood
+TMDB_API_KEY=your_tmdb_api_key
+API_KEY=your_tmdb_API_Read_Access_Token
+EOL
+
+    echo ".env file created. Please, remember to fill the correctr environment variables."
+fi
+
 # Set up Backend
 if [ -d "backend" ]; then
     if prompt_user "Do you want to set up the backend?"; then
