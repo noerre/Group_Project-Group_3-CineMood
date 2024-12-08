@@ -39,6 +39,11 @@ INSERT INTO cast (actor_id, movie_id) VALUES
 (2, 2),
 (3, 3);
 
+-- Insert into genre
+INSERT INTO genre (id, genre) VALUES 
+(1, "Drama"),
+(2, "Thriller"),
+(3, "Adventure");
 
 -- Insert into Movie Genre
 INSERT INTO movie_genre (movie_id, genre_id) VALUES 
@@ -70,4 +75,3 @@ INSERT INTO recommendations (user_id, movie_id, recommended_at) VALUES
 (1, 2, NOW()),
 (2, 3, NOW()),
 (3, 1, NOW());
-
