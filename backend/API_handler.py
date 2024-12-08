@@ -129,7 +129,7 @@ tmdb.api_key = tmdb_api_key
 tmdb.language = 'en'
 movie_api = Movie()
 
-def fetch_movies_by_genre(genre_name, mood, limit=10):
+def fetch_movies_by_genre(genre_name, mood, limit=1000):
     """
     Fetches movies based on genre name from TMDb.
 
