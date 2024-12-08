@@ -16,7 +16,9 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-const API_URL = "http://www.omdbapi.com?apikey=b6003d8a";
+const TMDB_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
+const TMDB_API_URL = "https://api.themoviedb.org/3";
+
 const BACKEND_URL = "http://localhost:8000"; 
 
 const HomePage = ({ searchMovies, searchTerm, setSearchTerm, movies }) => {
@@ -78,10 +80,21 @@ const SearchPage = () => {
   }, [location]);
 
   const searchMovies = async (title) => {
-    const response = await fetch(`${API_URL}&s=${title}`);
-    const data = await response.json();
-    setMovies(data.Search || []);
-  };
+    try {
+        const response = await fetch(
+          `${TMDB_API_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}`
+        );
+        const data = await response.json();
+    
+        if (data.results) {
+          setMovies(data.results);
+        } else {
+          setMovies([]);
+        }
+      } catch (error) {
+        console.error("Error fetching data from TMDB:", error);
+      }
+    };
 
   return (
     <>
@@ -201,7 +214,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const searchMovies = async (title) => {
-    const response = await fetch(`${API_URL}&s=${title}`);
+    const response = await fetch(`${TMDB_API_URL}&s=${title}`);
     const data = await response.json();
 
     setMovies(data.Search || []);
