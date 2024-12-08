@@ -389,6 +389,11 @@ INSERT INTO mood (mood) VALUES ('Angry');
 INSERT INTO mood (mood) VALUES ('Nostalgic');
 INSERT INTO mood (mood) VALUES ('Adventurous');
 
+
 ALTER TABLE users
 ADD COLUMN failed_attempts INT NOT NULL DEFAULT 0,
 ADD COLUMN lockout_time DATETIME NULL;
+SET SQL_SAFE_UPDATES = 0;
+UPDATE users
+SET failed_attempts = 0,
+    lockout_time = NULL;
