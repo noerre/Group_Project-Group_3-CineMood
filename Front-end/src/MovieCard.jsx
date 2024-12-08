@@ -1,3 +1,4 @@
+/*
 import React from "react";
 import PropTypes from "prop-types";
 import "./MovieCard.css";
@@ -41,4 +42,56 @@ const MovieCard = ({ movie, onMoreDetails }) => {
       }).isRequired,
     };
     
+export default MovieCard;
+
+*/
+
+import React from "react";
+import PropTypes from "prop-types";
+import "./MovieCard.css";
+
+const MovieCard = ({ movie, onMoreDetails }) => {
+  const posterUrl = movie.poster_path
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+    : "https://via.placeholder.com/500x750?text=No+Image";
+
+  return (
+    <div className="card movie-card">
+      <img
+        src={posterUrl}
+        className="card-img-top"
+        alt={`${movie.title || "Unknown"} Poster`}
+      />
+      <div className="card-body">
+        <h5 className="card-title">{movie.title || "Unknown Title"}</h5>
+        <p className="card-text">
+          {movie.overview ? movie.overview.substring(0, 150) + "..." : "No description available."}
+        </p>
+        <p className="card-text">
+          <small className="text-muted">
+            Release Year: {movie.release_date ? movie.release_date.split("-")[0] : "Unknown"}
+          </small>
+        </p>
+        {onMoreDetails && (
+          <button
+            className="btn btn-primary"
+            onClick={() => onMoreDetails(movie)}
+          >
+            More details
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+MovieCard.propTypes = {
+  movie: PropTypes.shape({
+    title: PropTypes.string,
+    overview: PropTypes.string,
+    poster_path: PropTypes.string,
+    release_date: PropTypes.string,
+  }).isRequired,
+};
+
 export default MovieCard;
