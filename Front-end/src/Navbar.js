@@ -37,7 +37,7 @@ const Navbar = () => {
               <>
                 <li className="nav-item">
                   <span className="navbar-text me-3">
-                    Welcome, {auth.user}!
+                    Welcome, {auth.user || "Guest"}!
                   </span>
                 </li>
                 <li className="nav-item">
