@@ -1,4 +1,4 @@
-# CineMood - Group Project (CFG Group 3)
+# CineMood - Group Project (Group 3)
 
 This project provides a movie recommendation application called **CineMood**, designed to suggest movies based on mood and preferences. It includes a backend service handling API requests and database operations, and a frontend interface for user interaction.
 
