@@ -35,7 +35,7 @@ To set up the project, clone this repository and run the installation scripts.
 
 1. Clone the repository:
    ```
-   git clone https://github.com/noerre/CFG-Group_Project-Group_3-CineMood
+   git clone https://github.com/noerre/Group_Project-Group_3-CineMood
    cd CineMood
    ```
 2. Run the installation script:
